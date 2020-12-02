@@ -30,12 +30,15 @@ void part1(struct int_content* input){
 }
 
 int main(){
-	struct int_content *input = read_file_int("./day-01.dat");
-	part1(input);
-	free_nested_int_file(input);
+	int type = 0; // only for the generic
+	(void)type; // silence unnused but set warning
 
-	input = read_file_int("./day-01.dat");
+	struct int_content *input = read_file("./day-01.dat", type);
+	part1(input);
+	free_file(input);
+
+	input = read_file("./day-01.dat", type);
 	part2(input);
-	free_nested_int_file(input);
+	free_file(input);
 	return EXIT_SUCCESS;
 }

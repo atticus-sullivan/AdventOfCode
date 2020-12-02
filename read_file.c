@@ -5,7 +5,7 @@
 
 #include "./read_file.h"
 
-void free_nested_string_file(struct string_content *output){
+void free_file_string(struct string_content *output){
 	for(int i=0; i < output->length; i++){
 		free(output->content[i]);
 	}
@@ -13,7 +13,7 @@ void free_nested_string_file(struct string_content *output){
 	free(output);
 }
 
-void free_nested_int_file(struct int_content *output){
+void free_file_int(struct int_content *output){
 	free(output->content);
 	free(output);
 }

@@ -55,12 +55,15 @@ void part2(struct string_content *input){
 }
 
 int main() {
-	struct string_content* input = read_file_string("./day-02.dat");
-	part1(input);
-	free_nested_string_file(input);
+	char* type;
+	(void)type; // silence unnused but set warning
 
-	input = read_file_string("./day-02.dat");
+	struct string_content* input = read_file("./day-02.dat", type);
+	part1(input);
+	free_file(input);
+
+	input = read_file("./day-02.dat", type);
 	part2(input);
-	free_nested_string_file(input);
+	free_file(input);
 	return EXIT_SUCCESS;
 }
