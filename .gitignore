@@ -8,4 +8,5 @@
 !*/
 
 # ignore .o
-.o
+*.o
+*.testing*
