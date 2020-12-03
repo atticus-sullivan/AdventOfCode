@@ -5,8 +5,7 @@
 
 #include "./read_file.h"
 
-void part1(struct string_content *input){
-	printf("Part1\n");
+int part1(struct string_content *input){
 	int counter = 0;
 	for(int i=0; i < input->length; i++){
 		// tokenize <min>-<max> <char>: <pwd>
@@ -30,11 +29,10 @@ void part1(struct string_content *input){
 			/* printf("Valid: %d-%d:%c %s\n", min, max, *ele, pwd); */
 		}
 	}
-	printf("%d\n", counter);
+	return counter;
 }
 
-void part2(struct string_content *input){
-	printf("Part2\n");
+int part2(struct string_content *input){
 	int counter = 0;
 	for(int i=0; i < input->length; i++){
 		// tokenize <min>-<max> <char>: <pwd>
@@ -51,7 +49,7 @@ void part2(struct string_content *input){
 			/* printf("Valid: %d-%d:%c %s\n", a, b, *ele, pwd); */
 		}
 	}
-	printf("%d\n", counter);
+	return counter;
 }
 
 int main() {
@@ -59,11 +57,11 @@ int main() {
 	(void)type; // silence unnused but set warning
 
 	struct string_content* input = read_file("./day-02.dat", type);
-	part1(input);
+	printf("Part1\nNum Valid: %d\n",part1(input));
 	free_file(input);
 
 	input = read_file("./day-02.dat", type);
-	part2(input);
+	printf("\nPart2\nNum Valid: %d\n",part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;
 }
