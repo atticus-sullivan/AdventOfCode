@@ -59,7 +59,16 @@ struct string_content *read_file_string(char* path){
 	}
 
 	struct string_content *output = malloc(sizeof(struct string_content));
+	if(output == NULL){
+		fclose(input);
+		return NULL;
+	}
 	output->content = malloc(lines*sizeof(char*));
+	if(output->content == NULL){
+		free(output);
+		fclose(input);
+		return NULL;
+	}
 	output->length = lines;
 	
 	size_t size;
@@ -85,7 +94,52 @@ struct int_content *read_file_int(char* path){
 	}
 
 	struct int_content *output = malloc(sizeof(struct int_content));
+	if(output == NULL){
+		fclose(input);
+		return NULL;
+	}
 	output->content = malloc(lines*sizeof(char*));
+	if(output->content == NULL){
+		free(output);
+		fclose(input);
+		return NULL;
+	}
+	output->length = lines;
+	
+	size_t size;
+	char* line;
+	ssize_t length;
+	for(int i=0; i < output->length; i++){
+		size=0;
+		line = NULL;
+		length = getline(&line, &size, input); //TODO error handling
+		line[length-1] = '\0';
+		output->content[i] = atoi(line);
+		free(line);
+	}
+	fclose(input);
+	return output;
+}
+
+struct long_content *read_file_long(char* path){
+	int lines = wc_l(path);
+	FILE* input = fopen(path, "r");
+	if(input == NULL) {
+		printf("File \"%s\" does not exist!!!\n",path);
+		return NULL;
+	}
+
+	struct long_content *output = malloc(sizeof(struct long_content));
+	if(output == NULL){
+		fclose(input);
+		return NULL;
+	}
+	output->content = malloc(lines*sizeof(char*));
+	if(output->content == NULL){
+		free(output);
+		fclose(input);
+		return NULL;
+	}
 	output->length = lines;
 	
 	size_t size;
@@ -96,7 +150,43 @@ struct int_content *read_file_int(char* path){
 		line = NULL;
 		length = getline(&line, &size, input);
 		line[length-1] = '\0';
-		output->content[i] = atoi(line);
+		output->content[i] = atol(line);
+		free(line);
+	}
+	fclose(input);
+	return output;
+}
+
+struct double_content *read_file_double(char* path){
+	int lines = wc_l(path);
+	FILE* input = fopen(path, "r");
+	if(input == NULL) {
+		printf("File \"%s\" does not exist!!!\n",path);
+		return NULL;
+	}
+
+	struct double_content *output = malloc(sizeof(struct double_content));
+	if(output == NULL){
+		fclose(input);
+		return NULL;
+	}
+	output->content = malloc(lines*sizeof(char*));
+	if(output->content == NULL){
+		free(output);
+		fclose(input);
+		return NULL;
+	}
+	output->length = lines;
+	
+	size_t size;
+	char* line;
+	ssize_t length;
+	for(int i=0; i < output->length; i++){
+		size=0;
+		line = NULL;
+		length = getline(&line, &size, input);
+		line[length-1] = '\0';
+		output->content[i] = atof(line);
 		free(line);
 	}
 	fclose(input);
