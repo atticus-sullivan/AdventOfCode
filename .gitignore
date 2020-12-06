@@ -10,3 +10,4 @@
 # ignore .o
 *.o
 *.testing*
+base_converter.c
