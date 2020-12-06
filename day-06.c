@@ -70,9 +70,7 @@ int main() {
 
 	struct string_content *input = read_file("./day-06.dat", type);
 	printf("Part1:\nSum of checked boxes (or): %d\n", part1(input));
-	free_file(input);
-	
-	input = read_file("./day-06.dat", type);
+
 	printf("\nPart2:\nSum of checked boxes (and): %d\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;

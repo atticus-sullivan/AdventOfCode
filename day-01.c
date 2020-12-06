@@ -35,9 +35,7 @@ int main(){
 
 	struct int_content *input = read_file("./day-01.dat", type);
 	printf("Part1\nx: %d\n", part1(input));
-	free_file(input);
 
-	input = read_file("./day-01.dat", type);
 	printf("\nPart2\nx: %d\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;
