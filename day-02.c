@@ -5,21 +5,26 @@
 
 #include "./read_file.h"
 
+inline void tokenize_pwd(char*, int*, int*, char*, char**) __attribute__((always_inline));
+
+inline void tokenize_pwd(char* input, int* a, int* b, char* c, char** pwd){
+		*a = atoi(strtok(input,"-"));
+		*b = atoi(strtok(NULL," "));
+		*c = *(strtok(NULL,":"));
+		*pwd = strtok(NULL,"")+1;
+}
+
 int part1(struct string_content *input){
 	int counter = 0;
 	for(int i=0; i < input->length; i++){
 		// tokenize <min>-<max> <char>: <pwd>
-		char* min_c = strtok(input->content[i],"-");
-		char* max_c = strtok(NULL," ");
-		char* ele = strtok(NULL,":");
-		char* pwd = strtok(NULL,"")+1;
-
-		int min = atoi(min_c);
-		int max = atoi(max_c);
+		int min = 0, max = 0;
+		char ele = 0, *pwd = NULL;
+		tokenize_pwd(input->content[i], &min, &max, &ele, &pwd);
 
 		int count = 0;
 		while(*(pwd) != '\0'){
-			if(*pwd == *ele){
+			if(*pwd == ele){
 				count++;
 			}
 			pwd++;
@@ -36,15 +41,11 @@ int part2(struct string_content *input){
 	int counter = 0;
 	for(int i=0; i < input->length; i++){
 		// tokenize <min>-<max> <char>: <pwd>
-		char* a_c = strtok(input->content[i],"-");
-		char* b_c = strtok(NULL," ");
-		char* ele = strtok(NULL,":");
-		char* pwd = strtok(NULL,"")+1;
+		int a = 0, b = 0;
+		char ele = 0, *pwd = NULL;
+		tokenize_pwd(input->content[i], &a, &b, &ele, &pwd);
 
-		int a = atoi(a_c);
-		int b = atoi(b_c);
-
-		if((pwd[a-1] == *ele) ^ (pwd[b-1] == *ele)){
+		if((pwd[a-1] == ele) ^ (pwd[b-1] == ele)){
 			counter++;
 			/* printf("Valid: %d-%d:%c %s\n", a, b, *ele, pwd); */
 		}
