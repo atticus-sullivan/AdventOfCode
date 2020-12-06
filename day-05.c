@@ -52,25 +52,24 @@ int part1(struct string_content* input, int max_row, int max_col){
 }
 
 int part2(struct string_content* input, int max_row, int max_col){
-	short *places = malloc((max_row*max_col) * sizeof(short*));
+	char *places = malloc((max_row*max_col) * sizeof(char));
 	for(int i=0; i < (max_col*max_row); i++){
 		places[i] = 0;
 	}
 
-	for(int i=0; i < input->length; i++){
+	for(int i=0; i < input->length && i < max_col*max_row; i++){
 		int pos[3] = {0};
 		calc_coords(input->content[i], max_row, max_col, pos);
-		places[pos[2]] = 1;
+		places[pos[2]] = 1; // set place occupied
 	}
 
-	for(int i=0; i < max_row; i++){
-		for(int z=1; z < max_col-1; z++){
-			if(places[i*8+z-1] == 1 && places[i*8+z+1] == 1 && places[i*8+z] == 0){
-				return i*8+z;
-			}
+	for(int i=1; i < max_col*max_row-1; i++){
+		if(places[i-1] == 1 && places[i+1] == 1 && places[i] == 0){
+			free(places);
+			return i;
 		}
 	}
-
+	free(places);
 	return -1;
 }
 
