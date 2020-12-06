@@ -35,7 +35,7 @@ int part1(struct string_content* input, int change_x, int change_y, int print){
 }
 
 int part2(struct string_content* input){
-	int ret = 1;
+	long ret = 1;
 	ret *= part1(input, 1, 1, 0);
 	ret *= part1(input, 3, 1, 0);
 	ret *= part1(input, 5, 1, 0);
@@ -51,10 +51,8 @@ int main() {
 
 	struct string_content* input = read_file("./day-03.dat", type);
 	printf("Part1\nTrees: %d\n", part1(input, 3, 1, 0));
-	free_file(input);
 
-	input = read_file("./day-03.dat", type);
-	printf("Part2\nTrees: %d\n", part2(input));
+	printf("\nPart2\nTrees: %d\n", part2(input));
 	free_file(input);
 
 	return EXIT_SUCCESS;
