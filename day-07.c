@@ -35,19 +35,20 @@ print_tree(struct element_tree *n)
 	struct element_tree *left, *right;
 
 	if (n == NULL) {
-		printf("nil");
+		/* printf("nil"); */
 		return;
 	}
 	left = RB_LEFT(n, link);
 	right = RB_RIGHT(n, link);
-	if (left == NULL && right == NULL)
-		printf("%s", n->to);
+	if (left == NULL && right == NULL){
+		/* printf("%s", n->to); */
+	}
 	else {
-		printf("%s(", n->to);
+		/* printf("%s(", n->to); */
 		print_tree(left);
-		printf(",");
+		/* printf(","); */
 		print_tree(right);
-		printf(")");
+		/* printf(")"); */
 	}
 }
 
@@ -66,7 +67,7 @@ void parse_to(char* to, struct from_to_map* map, char* from){
 
 		// null terminate the to segment
 		left[pmatch->rm_so] = '\0';
-		printf("Num: %d\tto: %s\n", num, left);
+		/* printf("Num: %d\tto: %s\n", num, left); */
 
 		// insert to segment into the map
 		struct element_tree* ele = malloc(sizeof(struct element_tree));
@@ -103,7 +104,7 @@ int rec_count(char* to, struct from_to_map* map, struct from_to_map* possible){
 	}
 
 	SLIST_FOREACH(z, res->from, link){
-		printf("%s\n", z->from);
+		/* printf("%s\n", z->from); */
 		struct element_tree* ele = malloc(sizeof(struct element_tree));
 		*ele = (struct element_tree) {.to = z->from};
 		struct element_tree* ret = RB_INSERT(from_to_map, possible, ele);
@@ -124,25 +125,25 @@ int part1(struct string_content* input){
 		char* bags_contain = strstr(input->content[i], " bags contain ");
 		*bags_contain = '\0';
 		bags_contain += 14;
-		printf("from: \"%s\" to: \"%s\"\n", input->content[i], bags_contain);
+		/* printf("from: \"%s\" to: \"%s\"\n", input->content[i], bags_contain); */
 
 		parse_to(bags_contain, &map, input->content[i]);
 
 		print_tree(RB_ROOT(&map));
-		printf("\n\n");
+		/* printf("\n\n"); */
 	}
 	struct element_tree* i;
 	struct element_list* z;
 
-	printf("\n");
+	/* printf("\n"); */
 	RB_FOREACH(i, from_to_map, &map){
-		printf("to: \"%s\" ", i->to);
+		/* printf("to: \"%s\" ", i->to); */
 		SLIST_FOREACH(z, i->from, link){
-			printf("from: \"%s\" ", z->from);
+			/* printf("from: \"%s\" ", z->from); */
 		}
-		printf("\n");
+		/* printf("\n"); */
 	}
-	printf("\n");
+	/* printf("\n"); */
 
 
 	struct from_to_map possible;
@@ -151,12 +152,12 @@ int part1(struct string_content* input){
 	rec_count("shiny gold", &map, &possible);
 
 	int counter = 0;
-	printf("\n\nPossibilities:\n");
+	/* printf("\n\nPossibilities:\n"); */
 	RB_FOREACH(i, from_to_map, &possible){
-		printf("%s, ", i->to);
+		/* printf("%s, ", i->to); */
 		counter++;
 	}
-	printf("\n");
+	/* printf("\n"); */
 	return counter;
 }
 
@@ -176,7 +177,7 @@ void parse_to2(char* to, struct from_list* head){
 
 		// null terminate the to segment
 		left[pmatch->rm_so] = '\0';
-		printf("Num: %d\tto: %s\n", num, left);
+		/* printf("Num: %d\tto: %s\n", num, left); */
 
 		// insert to segment into the map
 		struct element_list* segment = malloc(sizeof(struct element_list));
@@ -204,7 +205,7 @@ int rec_count2(char* to, struct from_to_map* map){
 		if(z->amount == 0){
 			continue;
 		}
-		printf("%d\n", z->amount);
+		/* printf("%d\n", z->amount); */
 		ret += z->amount * rec_count2(z->from, map);
 	}
 	return ret+1;
@@ -217,7 +218,7 @@ int part2(struct string_content* input){
 		char* bags_contain = strstr(input->content[i], " bags contain ");
 		*bags_contain = '\0';
 		bags_contain += 14;
-		printf("from: \"%s\" to: \"%s\"\n", input->content[i], bags_contain);
+		/* printf("from: \"%s\" to: \"%s\"\n", input->content[i], bags_contain); */
 
 		// insert to segment into the map
 		struct element_tree* ele = malloc(sizeof(struct element_tree));
@@ -236,21 +237,21 @@ int part2(struct string_content* input){
 		}
 
 		print_tree(RB_ROOT(&map));
-		printf("\n\n");
+		/* printf("\n\n"); */
 	}
 
 	struct element_tree* i;
 	struct element_list* z;
 
-	printf("\n");
+	/* printf("\n"); */
 	RB_FOREACH(i, from_to_map, &map){
-		printf("to: \"%s\" ", i->to);
+		/* printf("to: \"%s\" ", i->to); */
 		SLIST_FOREACH(z, i->from, link){
-			printf("from: \"%s\"(%d) ", z->from, z->amount);
+			/* printf("from: \"%s\"(%d) ", z->from, z->amount); */
 		}
-		printf("\n");
+		/* printf("\n"); */
 	}
-	printf("\n");
+	/* printf("\n"); */
 
 	return rec_count2("shiny gold", &map) - 1;
 }
@@ -260,10 +261,10 @@ int main() {
 	(void)type;
 
 	struct string_content *input = read_file("./day-07.dat", type);
-	/* printf("Part1:\n%d\n", part1(input)); */
-	/* free_file(input); */
+	printf("Part1:\n%d\n", part1(input));
+	free_file(input);
 	
-	/* input = read_file("./day-07.dat.testing", type); */
+	input = read_file("./day-07.dat", type);
 	printf("\nPart2:\n%d\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;
