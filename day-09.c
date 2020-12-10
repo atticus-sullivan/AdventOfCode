@@ -81,9 +81,7 @@ int main() {
 	struct long_content *input;
 	input = read_file("./day-09.dat", type);
 	printf("Part1:\n%ld\n", part1(input, 25, &miss));
-	free_file(input);
 
-	input = read_file("./day-09.dat", type);
 	printf("\nPart2:\n%ld\n", part2(input, miss));
 	free_file(input);
 	return EXIT_SUCCESS;
