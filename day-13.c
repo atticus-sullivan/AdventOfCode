@@ -95,23 +95,22 @@ int part2(struct string_content* input, int amount){
 		printf("%d\n", arr[i]);
 	}
 
-	int zero = arr[0];
-	int all_hit = 0;
+	int last = arr[0];
 	for(int i=1; i < amount; i++){
-		int ggt = ea_start(zero,arr[i]);
+		printf("Processing %d\n", arr[i]);
+		int ggt = ea_start(last,arr[i]);
 		int alpha_beta[2] = {0};
-		eea_start(zero, arr[i], alpha_beta);
-		int kgv = kl_v(zero, arr[i], ggt);
+		eea_start(last, arr[i], alpha_beta);
+		int kgv = kl_v(last, arr[i], ggt);
 
-		int hit = (((offset[i]/ggt)*alpha_beta[0]*zero) % kgv + kgv) % kgv;
-		printf("%-3d and %-3d hit at %-5d with offset %d\n", arr[i], zero, hit, offset[i]);
-		if(all_hit != 0){
-			all_hit = kl_v(all_hit, hit, ea_start(hit,all_hit));
-		} else {
-			all_hit = hit;
-		}
+		printf("ggt: %d  eea: %d %d   kgv: %d\n", ggt, alpha_beta[0], alpha_beta[1], kgv);
+
+		int hit = (((-offset[i]/ggt)*alpha_beta[0]*last) % kgv + kgv) % kgv;
+		printf("%-3d and %-3d hit at %-5d with offset %d\n\n", arr[i], last, hit, offset[i]);
+
+		last = hit;
 	}
-	return all_hit;
+	return last;
 }
 
 int main() {
