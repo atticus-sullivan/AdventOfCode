@@ -2,11 +2,13 @@
 
 WFLAGS = -Wall -Wextra -Wpedantic -Waddress -Warray-bounds -Wfloat-equal -Wformat -Wimplicit -Wimplicit-fallthrough -Winline -Wall -g
 
-OPTIMIZATION= -O0
+LFLAGS = -lm
 
-SANITIZE=
+OPTIMIZATION = -O0
 
-LIST = 01 02 03 04 05 06 07 08 09 10 11
+SANITIZE =
+
+LIST = 01 02 03 04 05 06 07 08 09 10 11 12 13
 targets = $(addprefix day, $(LIST))
 
 all: $(targets)
@@ -32,7 +34,10 @@ stat: SANITIZE = -fanalyzer
 stat: run
 
 $(targets): day%: day-%.c read_file.o
-	$(CC) $(SANITIZE) $(OPTIMIZATION) -o $@ $^ $(WFLAGS)
+	$(CC) $(SANITIZE) $(OPTIMIZATION) -o $@ $^ $(WFLAGS) $(LFLAGS)
 
 read_file.o: read_file.c read_file.h
 	$(CC) $(SANITIZE) $(OPTIMIZATION) -c -o $@ $< $(WFLAGS)
+
+clean:
+	$(RM) $(TARGETS) read_file.o
