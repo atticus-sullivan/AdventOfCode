@@ -10,9 +10,9 @@ unsigned long parse_expr1(char** in){
 #endif
 	unsigned long acc = 0;
 	if(**in == '('){
-		(*in)++; // skip opening parantheses
+		(*in)++; // skip opening paranthesis
 		acc = parse_expr1(in);
-		(*in)++; // skip closing parantheses
+		(*in)++; // skip closing paranthesis
 	} else {
 		acc = strtol(*in, in, 10);
 #ifdef DEBUG_EXT
@@ -29,9 +29,9 @@ unsigned long parse_expr1(char** in){
 #endif
 		int op2 = 0;
 		if(**in == '('){
-			(*in)++; // skip opening parantheses
+			(*in)++; // skip opening paranthesis
 			op2 = parse_expr1(in);
-			(*in)++; // skip closing parantheses
+			(*in)++; // skip closing paranthesis
 		} else {
 			op2 = strtol(*in, in, 10);
 #ifdef DEBUG_EXT
@@ -64,16 +64,16 @@ unsigned long parse_expr2(char** in){
 
 	// check for parantheses, otherwise read the first operand as accumulator
 	if(**in == '('){
-		(*in)++; // skip the opening parantheses
+		(*in)++; // skip the opening paranthesis
 		acc = parse_expr2(in);
-		(*in)++; // skip the closing parantheses
+		(*in)++; // skip the closing paranthesis
 	} else {
 		acc = strtol(*in, in, 10);
 	}
 
 	// go over expression
 	while(1){
-		// end if expression is over or the parantheses ends
+		// end if expression is over or the paranthesis ends
 		if(**in == '\0' || **in == ')') break;
 		char* operator = strtok_r(*in, " ", in); // read the operator
 #ifdef DEBUG_EXT
@@ -98,12 +98,12 @@ unsigned long parse_expr2(char** in){
 			break;
 		}
 
-		// go one layer down if the next is a parantheses (needs to get calculated first)
+		// go one layer down if the next is a paranthesis (needs to get calculated first)
 		// in this case strtol in the '+' branch will has calculate +0
 		if(**in == '('){
-			(*in)++; // skip the opening parantheses
+			(*in)++; // skip the opening paranthesis
 			op2 = parse_expr2(in);
-			(*in)++; // skip the closing parantheses
+			(*in)++; // skip the closing paranthesis
 			if(*operator == '+'){
 				acc += op2;
 			} else {
@@ -156,11 +156,11 @@ int main() {
 
 	struct string_content *input;
 	input = read_file("./day-18.dat", type);
-	printf("Part1:\n%lu\n", part1(input));
+	printf("Part1:\nSum of the results (no predecence): %lu\n", part1(input));
 	free_file(input);
 	
 	input = read_file("./day-18.dat", type);
-	printf("\nPart2:\n%lu\n", part2(input));
+	printf("\nPart2:\nSum of the results (predecence): %lu\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;
 }

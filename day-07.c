@@ -55,12 +55,12 @@ print_tree(struct element_tree *n)
 regex_t matcher;
 regmatch_t pmatch[1];
 void parse_to(char* to, struct from_to_map* map, char* from){
-	regcomp(&matcher, " (bag(|s)?(, |\.))", REG_EXTENDED);
+	regcomp(&matcher, " (bag(|s)?(, |.))", REG_EXTENDED);
 	char* left = to;
 
 	// loop while current one still maps to something
 	while(*left != '\0'){
-		int num = atoi(strtok_r(left, " ", &left));
+		strtok_r(left, " ", &left);
 
 		// get at which place the to segment ends
 		(void) regexec(&matcher, left, 1, pmatch, 0);
@@ -161,11 +161,10 @@ int part1(struct string_content* input){
 	return counter;
 }
 
-
 regex_t matcher;
 regmatch_t pmatch[1];
 void parse_to2(char* to, struct from_list* head){
-	regcomp(&matcher, " (bag(|s)?(, |\.))", REG_EXTENDED);
+	regcomp(&matcher, " (bag(|s)?(, |.))", REG_EXTENDED);
 	char* left = to;
 
 	// loop while current one still maps to something
@@ -189,7 +188,6 @@ void parse_to2(char* to, struct from_list* head){
 		left += pmatch->rm_eo;
 	}
 }
-
 
 int rec_count2(char* to, struct from_to_map* map){
 	struct element_list* z;
@@ -261,11 +259,11 @@ int main() {
 	(void)type;
 
 	struct string_content *input = read_file("./day-07.dat", type);
-	printf("Part1:\n%d\n", part1(input));
+	printf("Part1:\nAmount of bags that can contain a gold one: %d\n", part1(input));
 	free_file(input);
 	
 	input = read_file("./day-07.dat", type);
-	printf("\nPart2:\n%d\n", part2(input));
+	printf("\nPart2:\nAmount of bags that have to fit into a gold one: %d\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;
 }

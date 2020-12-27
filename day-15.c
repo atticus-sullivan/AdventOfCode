@@ -83,11 +83,11 @@ int main() {
 
 	struct int_content *input;
 	input = read_line_int("./day-15.dat");
-	printf("Part1:\n%d\n", part(input, 2020));
+	printf("Part1:\n2020th spoken number: %d\n", part(input, 2020));
 	free_file(input);
 	
 	input = read_line_int("./day-15.dat");
-	printf("\nPart2:\n%d\n", part(input, 30000000));
+	printf("\nPart2:\n30000000th spoken number: %d\n", part(input, 30000000));
 	free_file(input);
 	return EXIT_SUCCESS;
 }

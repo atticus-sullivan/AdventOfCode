@@ -222,8 +222,8 @@ int main() {
 	input = read_file("./day-16.dat", type);
 	int** tickets;
 	struct ticket_fields ticket_fields;
-	printf("Part1:\n%d\n", part1(input, 20, &tickets, &ticket_fields));
-	printf("\nPart2:\n%lu\n", part2(input, 20, tickets, &ticket_fields));
+	printf("Part1:\nAmount of wrong read tickets: %d\n", part1(input, 20, &tickets, &ticket_fields));
+	printf("\nPart2:\nProduct of the Values of the Fields starting with \"depature\" on own ticket: %lu\n", part2(input, 20, tickets, &ticket_fields));
 	free_file(input);
 	return EXIT_SUCCESS;
 }
