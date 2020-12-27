@@ -59,4 +59,6 @@ struct string_content   *read_file_string( char* path);
 void                     print_file_string(struct string_content *output);
 void                     free_file_string( struct string_content *output);
 
+struct int_content *read_line_int(char* path);
+
 #endif

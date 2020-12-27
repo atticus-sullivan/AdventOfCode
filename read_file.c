@@ -64,6 +64,26 @@ int wc_l(char* path) {
 	return linesCount;
 }
 
+int colon_l(char* path){
+	FILE *fp;
+	char ch;
+	int colon_count = 0;
+	//open file in read mode
+	fp=fopen(path,"r");
+	if(fp == NULL) {
+		printf("File \"%s\" does not exist!!!\n",path);
+		return -1;
+	}
+	//read character by character and check for new line
+	while((ch = fgetc(fp))!=EOF) {
+		if(ch == ',')
+			colon_count++;
+	}
+	//close the file
+	fclose(fp);
+	return colon_count + 1;
+}
+
 struct string_content *read_file_string(char* path){
 	int lines = wc_l(path);
 	if(lines < 0){
@@ -156,6 +176,53 @@ struct int_content *read_file_int(char* path){
 		output->content[i] = atoi(line);
 		free(line);
 	}
+	fclose(input);
+	return output;
+}
+
+struct int_content *read_line_int(char* path){
+	int eles = colon_l(path);
+	if(eles < 0){
+		return NULL;
+	}
+	FILE* input = fopen(path, "r");
+	if(input == NULL) {
+		printf("File \"%s\" does not exist!!!\n",path);
+		return NULL;
+	}
+
+	struct int_content *output = malloc(sizeof(struct int_content));
+	if(output == NULL){
+		fclose(input);
+		return NULL;
+	}
+	output->content = malloc(eles*sizeof(char*));
+	if(output->content == NULL){
+		free(output);
+		fclose(input);
+		return NULL;
+	}
+	output->length = eles;
+	
+	size_t size = 0;
+	char* line = NULL;
+	ssize_t length = getline(&line, &size, input);
+	if(length < 1){
+		// Error-handling
+		free(line);
+		free(output->content);
+		free(output);
+		fclose(input);
+		return NULL;
+	}
+	line[length-1] = '\0';
+
+	char* ele = strtok(line, ",");
+	for(int i=0; ele != NULL; i++){
+		output->content[i] = atoi(ele);
+		ele = strtok(NULL, ",");
+	}
+	free(line);
 	fclose(input);
 	return output;
 }
