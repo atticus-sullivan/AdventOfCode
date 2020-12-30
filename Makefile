@@ -8,10 +8,9 @@ OPTIMIZATION = -O0
 
 SANITIZE =
 
-# DEBUG=-DDEBUG_EXT
+# DEBUG=-DDEBUG_EXT -DDEBUG
 
-# TODO inseert 13 again
-LIST = 01 02 03 04 05 06 07 08 09 10 11 12 14 15 16 17 18
+LIST = 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19
 targets         = $(addprefix day, $(LIST))
 
 asantargets     = $(addsuffix -asan,     $(targets))
@@ -53,10 +52,6 @@ $(valgrindtargets): day%-valgrind: day-%.c read_file.o
 
 $(targets): day%: day-%.c read_file.o
 	$(CC) $(DEBUG) $(SANITIZE) $(OPTIMIZATION) -o $@ $^ $(WFLAGS) $(LFLAGS)
-
-# TODO remove again
-day13: day-13.c read_file.o
-	$(CC) $(SANITIZE) $(OPTIMIZATION) -o $@ $^ $(WFLAGS) $(LFLAGS)
 
 read_file.o: read_file.c read_file.h
 	$(CC) $(SANITIZE) $(OPTIMIZATION) -c -o $@ $< $(WFLAGS)

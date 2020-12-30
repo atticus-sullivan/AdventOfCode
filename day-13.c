@@ -151,21 +151,27 @@ long part2b(struct string_content* input, int amount){
 		num = strtok(NULL, ",");
 	}
 
+#ifdef DEBUG
 	printf("%-5s\t%-5s\t%-5s\n", "offset", "mod", "line");
 	for(int i=0; i < amount; i++){
 		printf("%-5d\t", offset[i]);
 		printf("%-5d\t", mods[i]);
 		printf("%-5d\n", arr[i]);
 	}
+#endif
 	qsort(arr_s, amount, sizeof(int), compare);
 	long r = arr_s[0];
 	long v = mods[search(arr_s[0], arr)];
+#ifdef DEBUG
 	printf("r: %ld\t v: %ld\n", r, v);
+#endif
 
 	for(int i=1; i < amount; i++){
 		long b = arr_s[i];
+#ifdef DEBUG
 		printf("b: %ld\n", b);
 		printf("mods[b]: %d (search for b in arr)\n", mods[search(b, arr)]);
+#endif
 		while(v % b != mods[search(b, arr)]){
 			v += r;
 		}
@@ -175,14 +181,6 @@ long part2b(struct string_content* input, int amount){
 }
 
 int main() {
-	/* printf("%d\n", ea(5,911)); */
-	/* printf("%d %d\n", in[0], in[1]); */
-	/* eea(45,63,in); */
-	/* printf("%d\n", ea(45,63)); */
-	/* printf("%d %d\n", in[0], in[1]); */
-	/* return 0; */
-
-
 	char* type;
 	(void)type;
 
