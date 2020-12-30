@@ -11,3 +11,4 @@
 *.o
 *.testing*
 base_converter.c
+*py
