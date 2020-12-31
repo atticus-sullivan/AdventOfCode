@@ -21,6 +21,7 @@ ubsantargets    = $(addsuffix -ubsan,    $(targets))
 tsantargets     = $(addsuffix -tsan,     $(targets))
 stattargets     = $(addsuffix -stat,     $(targets))
 valgrindtargets = $(addsuffix -valgrind, $(targets))
+perftargets     = $(addsuffix -perf,     $(targets))
 
 .PHONY: $(asantargets) $(lsantargets) $(ubsantargets) $(tsantargets) $(stattargets) $(valgrindtargets)
 
@@ -52,11 +53,17 @@ $(valgrindtargets): day%-valgrind: day-%.c read_file.o
 	$(CC) $(SANITIZE) $(OPTIMIZATION) -o $@ $^ $(WFLAGS) $(LFLAGS)
 	valgrind --tool=memcheck --leak-check=full ./$@
 
+$(perftargets): day%-perf: day-%.c read_file.o
+	$(CC) $(SANITIZE) $(OPTIMIZATION) -o $@ $^ $(WFLAGS) $(LFLAGS)
+	$(RM) $@.perf
+	perf record -o $@.perf ./$@
+	perf report -i $@.perf
+
 $(targets): day%: day-%.c read_file.o
 	$(CC) $(DEBUG) $(SANITIZE) $(OPTIMIZATION) -o $@ $^ $(WFLAGS) $(LFLAGS)
 
 read_file.o: read_file.c read_file.h
-	$(CC) $(SANITIZE) $(OPTIMIZATION) -c -o $@ $< $(WFLAGS)
+	$(CC)  $(SANITIZE) $(OPTIMIZATION) -c -o $@ $< $(WFLAGS)
 
 clean:
-	$(RM) $(targets) read_file.o $(asantargets) $(lsantargets) $(ubsantargets) $(tsantargets) $(stattargets) $(valgrindtargets)
+	$(RM) $(targets) read_file.o $(asantargets) $(lsantargets) $(ubsantargets) $(tsantargets) $(stattargets) $(valgrindtargets) $(perftargets) $(perftargets).perf
