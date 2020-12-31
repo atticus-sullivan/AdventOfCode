@@ -110,26 +110,6 @@ struct head_indices* validate_rule(struct element_rules* rule, char* string, int
 		return ret_indices;
 	}
 
-	if(rule->alternatives->stqh_first->sub->stqh_first->literal != '\0'){
-		char literal = rule->alternatives->stqh_first->sub->stqh_first->literal;
-		// rule is just a literal
-#ifdef DEBUG
-		printf("rule: %d literal '%c'\n", rule->rule_num, literal);
-#endif
-		if (string[index] == literal){
-			// insert the current index + 1 into the returned list
-			assert(STAILQ_EMPTY(ret_indices) == 1 && "ret_indices should have been empty");
-			struct element_indices* i1 = malloc(sizeof(struct element_indices));
-			i1->index = index+1; // take the given index
-			STAILQ_INSERT_TAIL(ret_indices, i1, link);
-			assert(list_length(ret_indices) == 1 && "ret_indices length should have been 1");
-			return ret_indices;
-		} else {
-			assert(list_length(ret_indices) == 0 && "ret_indices length should have been 0");
-			return ret_indices; // empty
-		}
-	}
-
 	// list in which the possible lengths/indices are stored
 	struct head_indices* indices = malloc(sizeof(struct head_indices));
 	STAILQ_INIT(indices);
@@ -165,7 +145,29 @@ struct head_indices* validate_rule(struct element_rules* rule, char* string, int
 			struct element_indices* idx;
 			STAILQ_FOREACH(idx, indices, link){
 
+				if(subrule->literal != '\0'){
+					// subrule is a literal -> no alternative possible and no other subrule
 #ifdef DEBUG
+					printf("rule: %d literal '%c'\n", rule->rule_num, subrule->literal);
+#endif
+					free(next_indices); // should be empty
+					free(ret_indices);  // should be empty
+					if (string[idx->index] == subrule->literal){
+						// insert the current index + 1 into the returned list
+						indices->stqh_first->index = idx->index + 1; // only one element contained
+						assert(list_length(indices) == 1 && "indices length should have been 1");
+						return indices;
+					} else {
+						struct element_indices* freeed = STAILQ_FIRST(indices);
+						STAILQ_REMOVE_HEAD(indices, link);
+						free(freeed);
+						assert(list_length(indices) == 0 && "indices length should have been 1");
+						return indices; // empty
+					}
+				} else {
+					// subrule is another rule
+#ifdef DEBUG
+					printf("other rule\n");
 					printf("%*s\n", rec_lvl + strlen("Subrule-------------------"), "Subrule-------------------");
 #endif
 					struct head_indices* ret = validate_rule(subrule->next, string, rec_lvl+8, idx->index);
@@ -187,6 +189,7 @@ struct head_indices* validate_rule(struct element_rules* rule, char* string, int
 					printf("%*s\n", rec_lvl + strlen("Subrule end-------------------"), "Subrule end-------------------");
 #endif
 					free(ret);
+				}
 			} // end go over indices in subrule
 			free_list(indices);
 			STAILQ_CONCAT(indices, next_indices); // add the matched indices
