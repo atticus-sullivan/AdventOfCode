@@ -35,21 +35,10 @@ struct subrules_ele {
 STAILQ_HEAD(subrules_head, subrules_ele);
 
 struct element_indices {
-	int index;
+	size_t index;
 	STAILQ_ENTRY(element_indices) link;
 };
 STAILQ_HEAD(head_indices, element_indices);
-
-void print_list(char* string, struct head_indices* indices, int indent){
-#ifdef DEBUG
-					printf("%*s%s: ", indent, "", string);
-					struct element_indices* muell;
-					STAILQ_FOREACH(muell, indices, link){
-						printf("%d ", muell->index);
-					}
-					printf("\n");
-#endif
-}
 
 void free_list(struct head_indices* indices){
 	struct element_indices* i;
@@ -76,37 +65,14 @@ int list_length(struct head_indices* indices){
  *             <String (Literal) or a RULE (searchable in the tree)>
  *         >
  *     >
- *
- * validate_string:
- *     go over RULES{
- *         go over alternatives{
- *             check if string matches Sub-Rule-Chain (on first missmatch -> next alternative)
- *             check if strign is completely consumed -> yes -> break all
- *         }
- *     }
 */
-
-/*
- * TODO New:
- *     - work on indices instead of strings (parameter)
- *     - Return somehow the set (list) of possible next indices (see https://github.com/mebeim/aoc/blob/master/2020/solutions/day19.py)
-*/
-
-struct head_indices* validate_rule(struct element_rules* rule, char* string, int rec_lvl, int index){
-
-#ifdef DEBUG
-	printf("%*s%d for string: \"%s\"\n", rec_lvl + strlen("Try rule "), "Try rule ", rule->rule_num, string);
-#endif
-
+struct head_indices* validate_rule(struct element_rules* rule, char* string, int rec_lvl, size_t index){
 
 	// empty list with all indices that are being mathced by that rule
 	struct head_indices* ret_indices = malloc(sizeof(struct head_indices));
 	STAILQ_INIT(ret_indices);
 
 	if(index >= strlen(string)){
-#ifdef DEBUG
-		printf("%*sIndex at end of string\n", rec_lvl, "");
-#endif
 		return ret_indices;
 	}
 
@@ -121,9 +87,6 @@ struct head_indices* validate_rule(struct element_rules* rule, char* string, int
 	// go over all alternatives of the rule
 	struct element_alt* alternative;
 	STAILQ_FOREACH(alternative, rule->alternatives, link){
-#ifdef DEBUG
-		printf("%*s\n", rec_lvl + strlen("--------------------------Alternative"), "--------------------------Alternative");
-#endif
 		assert(STAILQ_EMPTY(indices) == 1 && "indices should have been empty");
 		struct element_indices* i1 = malloc(sizeof(struct element_indices));
 		i1->index = index; // take the given index
@@ -133,23 +96,12 @@ struct head_indices* validate_rule(struct element_rules* rule, char* string, int
 		struct subrules_ele* subrule;
 		STAILQ_FOREACH(subrule, alternative->sub, link){
 
-#ifdef DEBUG
-					printf("%*sIndices to be tested: ", rec_lvl, "");
-					struct element_indices* muell;
-					STAILQ_FOREACH(muell, indices, link){
-						printf("%d ", muell->index);
-					}
-					printf("\n");
-#endif
 			// go over possible start indices at this point
 			struct element_indices* idx;
 			STAILQ_FOREACH(idx, indices, link){
 
 				if(subrule->literal != '\0'){
 					// subrule is a literal -> no alternative possible and no other subrule
-#ifdef DEBUG
-					printf("rule: %d literal '%c'\n", rule->rule_num, subrule->literal);
-#endif
 					free(next_indices); // should be empty
 					free(ret_indices);  // should be empty
 					if (string[idx->index] == subrule->literal){
@@ -166,28 +118,12 @@ struct head_indices* validate_rule(struct element_rules* rule, char* string, int
 					}
 				} else {
 					// subrule is another rule
-#ifdef DEBUG
-					printf("other rule\n");
-					printf("%*s\n", rec_lvl + strlen("Subrule-------------------"), "Subrule-------------------");
-#endif
 					struct head_indices* ret = validate_rule(subrule->next, string, rec_lvl+8, idx->index);
-				
-#ifdef DEBUG
-					printf("%*sReturned indices: ", rec_lvl, "");
-					struct element_indices* muell;
-					STAILQ_FOREACH(muell, ret, link){
-						printf("%d ", muell->index);
-					}
-					printf("\n");
-#endif
 
 					if(!STAILQ_EMPTY(ret)){
 						// sub-rule matched at least one time
 						STAILQ_CONCAT(next_indices, ret); // add the returned indices to the list of indices to get checked
 					}
-#ifdef DEBUG
-					printf("%*s\n", rec_lvl + strlen("Subrule end-------------------"), "Subrule end-------------------");
-#endif
 					free(ret);
 				}
 			} // end go over indices in subrule
@@ -213,28 +149,27 @@ int part1(struct string_content* input, int start, struct rules_head* rules){
 		/* printf("%s\n", input->content[i]); */
 
 		// go over all rules
-		struct element_rules* x;
-		RB_FOREACH(x, rules_head, rules){
-#ifdef DEBUG
-			printf("\nRule %d\n", x->rule_num);
-#endif
-			struct head_indices* ret = validate_rule(x, input->content[i], 0, 0);
+		struct element_rules find  = {.rule_num = 0};
+		struct element_rules* zero = RB_FIND(rules_head, rules, &find);
+		struct head_indices* ret   = validate_rule(zero, input->content[i], 0, 0);
 
-			int matched = 0;
-			struct element_indices* f;
-			struct element_indices* f_save;
-			STAILQ_FOREACH_SAFE(f, ret, link, f_save){
-				if(!matched && f->index == strlen(input->content[i])){
-					printf("%s\n", input->content[i]);
-					counter++;
-					matched = 1;
-				}
-				STAILQ_REMOVE(ret, f, element_indices, link);
-				free(f);
+		// check if returned list contains the string length
+		// and IMPORTANT free the returned list
+		int matched = 0;
+		struct element_indices* f;
+		struct element_indices* f_save;
+		STAILQ_FOREACH_SAFE(f, ret, link, f_save){
+			if(!matched && f->index == strlen(input->content[i])){
+#ifdef DEBUG_1
+				printf("%s\n", input->content[i]);
+#endif
+				counter++;
+				matched = 1;
 			}
-			free(ret);
-			if(matched) break; // don't test other rules as well
+			STAILQ_REMOVE(ret, f, element_indices, link);
+			free(f);
 		}
+		free(ret);
 	}
 	return counter;
 }
@@ -339,25 +274,37 @@ void read_rules(struct string_content* input, struct rules_head* rules, int* rul
 
 	struct element_rules* x;
 	RB_FOREACH(x, rules_head, rules){
+#ifdef DEBUG_1
 		printf("%d(%p):", x->rule_num, x);
+#endif
 		struct element_alt* y;
 		STAILQ_FOREACH(y, x->alternatives, link){
 			struct subrules_ele* z;
 			STAILQ_FOREACH(z, y->sub, link){
 				if(z->literal != '\0'){
+#ifdef DEBUG_1
 					printf(" \"%c\"", z->literal);
+#endif
 				} else {
+#ifdef DEBUG_1
 					printf(" %d", z->next_i);
+#endif
 					struct element_rules find = {.rule_num = z->next_i};
 					z->next = RB_FIND(rules_head, rules, &find);
+#ifdef DEBUG_1
 					printf("(%p)", z->next);
+#endif
 				}
 			}
+#ifdef DEBUG_1
 			if(STAILQ_NEXT(y, link)){
 				printf(" |");
 			}
+#endif
 		}
+#ifdef DEBUG_1
 		printf("\n");
+#endif
 	}
 
 }
@@ -397,11 +344,11 @@ int main() {
 	int rules_length = -1;
 
 	read_rules(input, &rules, &rules_length);
+#ifdef DEBUG_1
 	printf("\n");
+#endif
 
-	/* printf("Part1:\n%d\n", part1(input, rules_length, &rules)); */
-
-	/* return 0; */
+	printf("Part1:\n%d\n", part1(input, rules_length, &rules));
 
 		// alter rule 8
 	struct element_rules find = {.rule_num = 8};
@@ -456,12 +403,13 @@ int main() {
 	*new_sub = (struct subrules_ele) {.literal = scr->literal, .next_i = scr->next_i, .next = scr->next};
 	STAILQ_INSERT_TAIL(new_sub_h, new_sub, link);
 
+#ifdef DEBUG_1
 	print_rules(&rules);
+#endif
 
 	printf("\nPart2:\n%d\n", part1(input, rules_length, &rules));
 
 	free_rules(&rules);
-
 	free_file(input);
 	return EXIT_SUCCESS;
 }
