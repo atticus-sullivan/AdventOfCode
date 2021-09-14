@@ -215,3 +215,5 @@ int main() {
 	free_file(input);
 	return EXIT_SUCCESS;
 }
+
+// TODO free data structures
