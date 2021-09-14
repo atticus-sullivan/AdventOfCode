@@ -9,5 +9,5 @@
 
 # ignore .o
 *.o
-*.testing*
+# *.testing*
 *py
