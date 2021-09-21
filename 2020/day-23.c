@@ -66,7 +66,8 @@ struct cup* step(struct clock* clock, struct cup* active, int min, int max){
 	int dst_l = active->label - 1;
 	struct cup* dst = NULL;
 	while(dst == NULL){
-		dst = find(clock, dst_l);
+		if(dst_l != n1->label && dst_l != n2->label && dst_l != n3->label)
+			dst = find(clock, dst_l);
 		dst_l--;
 		if(dst_l < min) dst_l = max;
 	}
