@@ -4,143 +4,156 @@
 #include <limits.h>
 
 #include "./read_file.h"
+#include "queue.h"
 
-int get_index(int* clock, int len, int search){
-	for(int i = 0; i < len; ++i){
-		if(clock[i] == search){
-			return i;
-		}
+struct cup {
+  int label;
+  TAILQ_ENTRY(cup) link;
+};
+TAILQ_HEAD(clock, cup);
+
+struct cup* find(struct clock* clock, int label){
+	struct cup* i = NULL;
+	TAILQ_FOREACH(i, clock, link){
+		if(i->label == label) return i;
 	}
-	return -1;
+	return NULL;
 }
 
-int search_dst(int* clock, int len, int search, int min, int max){
-	// calcuate dst:
-	int dst = 0;
-	while(1){
-		dst = get_index(clock, len, search);
-		if(dst >= 0){
-			break;
-		}
-		search--;
-		if(search < min) search = max;
-	}
-	return dst;
-}
-
-int step(int** clock, int len, int index, int min, int max){
-	int ret_idx = 0;
-	// src: clock[index+1 % len], clock[index+2 % len], clock[index+3 % len]
-	int* clock_new = malloc(len * sizeof(int));
-	int* clock_tmp = malloc((len-3) * sizeof(int));
-
-	// copy elements, leave to be moved out
-	int j = 0;
-	for(int i = 0; i < len; ++i){
-		if(i != (index+3) % len && i != (index+1) % len && i != (index+2) % len)
-			clock_tmp[j++] = (*clock)[i];
-	}
-
-	// copy elemnts insert moved elements again
-	int dst = search_dst(clock_tmp, len-3, (*clock)[index]-1, min, max);
-	/* printf("dst: %d index: %d\n", dst, index); */
-
-	int idx = index;
-	// adjust index to fit to the clock_tmp
-	if(idx+3 >= len){
-		// idx-(l-idx+4)
-		idx = idx - (idx + 4 - len);
-	}
-	j = 0;
-	int j2 = 0;
-	for(int i = 0; i < len; ++i){
-		if(j > dst && j2 <= dst+3){
-			clock_new[i] = (*clock)[(index+j2-dst)% len];
-			/* printf("clock_new[%d] = %d ((*clock)[index+j-dst])\n", i, (*clock)[(index+j2-dst) % len]); */
-			j2++;
+void print(struct clock* clock, struct cup* active){
+	struct cup* i = NULL;
+	TAILQ_FOREACH(i, clock, link){
+		if(i == active){
+			printf("(%d), ", i->label);
 		} else {
-			if(j == idx){
-				ret_idx = i;
-			}
-			clock_new[i] = clock_tmp[j];
-			/* printf("clock_new[%d] = %d (clock_tmp[j])\n", i, clock_tmp[j]); */
-			j++;
-			j2++;
+			printf("%d, ", i->label);
 		}
 	}
-	free(*clock);
-	free(clock_tmp);
-	*clock = clock_new;
-	return ret_idx;
+	printf("\n");
+}
+
+void printFinal(struct clock* clock){
+	struct cup* i = NULL;
+	_Bool printing = 0;
+	TAILQ_FOREACH(i, clock, link){
+		if(printing)
+			printf("%d", i->label);
+		if(i->label == 1) printing = 1;
+	}
+	TAILQ_FOREACH(i, clock, link){
+		if(i->label == 1) break;
+		printf("%d", i->label);
+	}
+	printf("\n");
+}
+
+struct cup* step(struct clock* clock, struct cup* active, int min, int max){
+	// remove taken cups
+	struct cup* n1 = TAILQ_NEXT(active, link);
+	if(n1 == NULL) n1 = TAILQ_FIRST(clock);
+
+	struct cup* n2 = TAILQ_NEXT(n1, link);
+	if(n2 == NULL) n2 = TAILQ_FIRST(clock);
+
+	struct cup* n3 = TAILQ_NEXT(n2, link);
+	if(n3 == NULL) n3 = TAILQ_FIRST(clock);
+
+	TAILQ_REMOVE(clock, n1, link); // loop
+	TAILQ_REMOVE(clock, n2, link); // loop
+	TAILQ_REMOVE(clock, n3, link); // loop
+
+	// search the destination cup
+	int dst_l = active->label - 1;
+	struct cup* dst = NULL;
+	while(dst == NULL){
+		dst = find(clock, dst_l);
+		dst_l--;
+		if(dst_l < min) dst_l = max;
+	}
+
+	// insert the removed cups at the destination
+	TAILQ_INSERT_AFTER(clock, dst, n1, link); // loop?
+	TAILQ_INSERT_AFTER(clock, n1, n2, link); // loop?
+	TAILQ_INSERT_AFTER(clock, n2, n3, link); // loop?
+
+	// get the next active cup
+	if(TAILQ_NEXT(active, link) != NULL)
+		return TAILQ_NEXT(active, link);
+	return TAILQ_FIRST(clock);
 }
 
 int part1(struct string_content* input){
 	int len = strlen(input->content[0]);
-	int *clock = malloc(len * sizeof(int));
+	struct clock* clock = malloc(sizeof(struct clock));
+	TAILQ_INIT(clock);
 	int min = INT_MAX; int max = INT_MIN;
 	for(int i = 0; i < len; i++){
-		clock[i] = input->content[0][i] - '0';
-		if (clock[i] < min)
-			min = clock[i];
-		if (clock[i] > max)
-			max = clock[i];
+		struct cup* cup = malloc(sizeof(struct cup));
+		cup->label = input->content[0][i] - '0';
+		TAILQ_INSERT_TAIL(clock, cup, link);
+		if (cup->label < min)
+			min = cup->label;
+		if (cup->label > max)
+			max = cup->label;
 	}
 
-	int index = 0;
+	struct cup* active = TAILQ_FIRST(clock);
 	for(int i = 0; i < 100; ++i){
-		/* for(int i=0; i<len; ++i){ */
-		/* 	printf("%d ", clock[i]); */
-		/* } */
+		/* print(clock, active); */
+		active = step(clock, active, min, max);
+		/* print(clock, active); */
 		/* printf("\n"); */
-
-		index = (step(&clock, len, index, min, max) + 1) % len;
-
-		/* for(int i=0; i<len; ++i){ */
-		/* 	printf("%d ", clock[i]); */
-		/* } */
-		/* printf("\n\n"); */
 	}
-	for(int i=0; i<len; ++i){
-		printf("%d ", clock[i]);
-	}
-	printf("\n\n");
-
-	free(clock);
+	printFinal(clock);
 	return 0;
 }
 
 #define size 1000000 // 1 000 000
+
 #define rounds 10000000 // 10 000 000
-// #define rounds 1000 // 10 000 000
+// #define rounds 1000 // 1 000
 
 int part2(struct string_content* input){
 	int len = strlen(input->content[0]);
-	int *clock = malloc(size * sizeof(int));
+	struct clock* clock = malloc(sizeof(struct clock));
+	TAILQ_INIT(clock);
 	int min = INT_MAX; int max = INT_MIN;
 	for(int i = 0; i < len; i++){
-		clock[i] = input->content[0][i] - '0';
-		if (clock[i] < min)
-			min = clock[i];
-		if (clock[i] > max)
-			max = clock[i];
+		struct cup* cup = malloc(sizeof(struct cup));
+		cup->label = input->content[0][i] - '0';
+		TAILQ_INSERT_TAIL(clock, cup, link);
+		if (cup->label < min)
+			min = cup->label;
+		if (cup->label > max)
+			max = cup->label;
 	}
-	for(int i = len; i < size; i++){
-		clock[i] = max+i-len+1;
+	for(int i = max; i <= max+(size-len); i++){
+		struct cup* cup = malloc(sizeof(struct cup));
+		cup->label = i;
+		TAILQ_INSERT_TAIL(clock, cup, link);
 	}
-	len = size;
+	max = max+(size-len);
 
-	int index = 0;
+	struct cup* active = TAILQ_FIRST(clock);
+
 	for(int i = 0; i < rounds; ++i){
 		if(i % (rounds/1000) == 0)
 			printf("Progress: %d of %d\n", i / (rounds/1000), rounds / (rounds/1000));
-		index = (step(&clock, len, index, min, max) + 1) % len;
+		/* print(clock, active); */
+		active = step(clock, active, min, max);
+		/* print(clock, active); */
+		/* printf("\n"); */
 	}
-	for(int i=0; i<len; ++i){
-		printf("%d ", clock[i]);
-	}
-	printf("\n\n");
+	struct cup* one = find(clock, 1);
 
-	free(clock);
+	struct cup* two = TAILQ_NEXT(one, link);
+	if(two == NULL) two = TAILQ_FIRST(clock);
+
+	struct cup* three = TAILQ_NEXT(two, link);
+	if(three == NULL) three = TAILQ_FIRST(clock);
+
+	printf("Fst after 1: %d\n", two->label);
+	printf("Snd after 1: %d\n", three->label);
 	return 0;
 }
 
@@ -149,11 +162,11 @@ int main() {
 	(void)type;
 
 	struct string_content *input;
-	input = read_file("./day-23.dat", type);
+	input = read_file("./day-23.dat.testing", type);
 	printf("Part1:\n%d\n", part1(input));
 	free_file(input);
 
-	input = read_file("./day-23.dat", type);
+	input = read_file("./day-23.dat.testing", type);
 	printf("\nPart2:\n%d\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;
