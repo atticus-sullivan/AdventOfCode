@@ -5,6 +5,8 @@
 
 #include "./read_file.h"
 #include "queue.h"
+#include "tree.h"
+
 
 struct cup {
   int label;
@@ -12,12 +14,22 @@ struct cup {
 };
 TAILQ_HEAD(clock, cup);
 
-struct cup* find(struct clock* clock, int label){
-	struct cup* i = NULL;
-	TAILQ_FOREACH(i, clock, link){
-		if(i->label == label) return i;
-	}
-	return NULL;
+void insert_after(struct clock* head, struct cup* listelem, struct cup* elem){
+	TAILQ_INSERT_AFTER(head, listelem, elem, link);
+}
+
+void insert_tail(struct clock* head, struct cup* elem){
+	/* printf("inserting %d\n", elem->label); */
+	TAILQ_INSERT_TAIL(head, elem, link);
+}
+
+void remove_tailq(struct clock* head, struct cup* elem){
+	TAILQ_REMOVE(head, elem, link);
+}
+
+struct cup* find(struct cup* map, int label){
+	if(label <= 0) return NULL;
+	return map + label;
 }
 
 void print(struct clock* clock, struct cup* active){
@@ -45,107 +57,120 @@ void printFinal(struct clock* clock){
 		printf("%d", i->label);
 	}
 	printf("\n");
+	printf("\n");
 }
 
-struct cup* step(struct clock* clock, struct cup* active, int min, int max){
-	// remove taken cups
-	struct cup* n1 = TAILQ_NEXT(active, link);
-	if(n1 == NULL) n1 = TAILQ_FIRST(clock);
+struct clock* step(struct clock* clock, struct cup* map, int min, int max, int rounds, int steps){
+	struct cup* active = TAILQ_FIRST(clock);
+	/* print(clock, active); */
+	for(int i = 0; i < rounds; ++i){
+		if(i % (rounds/steps) == 0)
+			printf("Progress: %d of %d\n", i / (rounds/steps), steps);
+		// remove taken cups
+		struct cup* n1 = TAILQ_NEXT(active, link);
+		if(n1 == NULL) n1 = TAILQ_FIRST(clock);
 
-	struct cup* n2 = TAILQ_NEXT(n1, link);
-	if(n2 == NULL) n2 = TAILQ_FIRST(clock);
+		struct cup* n2 = TAILQ_NEXT(n1, link);
+		if(n2 == NULL) n2 = TAILQ_FIRST(clock);
 
-	struct cup* n3 = TAILQ_NEXT(n2, link);
-	if(n3 == NULL) n3 = TAILQ_FIRST(clock);
+		struct cup* n3 = TAILQ_NEXT(n2, link);
+		if(n3 == NULL) n3 = TAILQ_FIRST(clock);
 
-	TAILQ_REMOVE(clock, n1, link); // loop
-	TAILQ_REMOVE(clock, n2, link); // loop
-	TAILQ_REMOVE(clock, n3, link); // loop
+		remove_tailq(clock, n1);
+		remove_tailq(clock, n2);
+		remove_tailq(clock, n3);
 
-	// search the destination cup
-	int dst_l = active->label - 1;
-	struct cup* dst = NULL;
-	while(dst == NULL){
-		if(dst_l != n1->label && dst_l != n2->label && dst_l != n3->label)
-			dst = find(clock, dst_l);
-		dst_l--;
-		if(dst_l < min) dst_l = max;
+		// search the destination cup
+		int dst_l = active->label - 1;
+		struct cup* dst = NULL;
+		while(dst == NULL){
+			if(dst_l != n1->label && dst_l != n2->label && dst_l != n3->label)
+				dst = find(map, dst_l);
+			dst_l--;
+			if(dst_l < min) dst_l = max;
+		}
+
+		// insert the removed cups at the destination
+		insert_after(clock, dst, n1);
+		insert_after(clock, n1, n2);
+		insert_after(clock, n2, n3);
+
+		/* print(clock, active); */
+		/* printf("\n"); */
+
+		// get the next active cup
+		if(TAILQ_NEXT(active, link) != NULL)
+			active = TAILQ_NEXT(active, link);
+		else
+			active = TAILQ_FIRST(clock);
 	}
-
-	// insert the removed cups at the destination
-	TAILQ_INSERT_AFTER(clock, dst, n1, link); // loop?
-	TAILQ_INSERT_AFTER(clock, n1, n2, link); // loop?
-	TAILQ_INSERT_AFTER(clock, n2, n3, link); // loop?
-
-	// get the next active cup
-	if(TAILQ_NEXT(active, link) != NULL)
-		return TAILQ_NEXT(active, link);
-	return TAILQ_FIRST(clock);
+	/* print(clock, active); */
+	return clock;
 }
 
 int part1(struct string_content* input){
 	int len = strlen(input->content[0]);
+
 	struct clock* clock = malloc(sizeof(struct clock));
 	TAILQ_INIT(clock);
+
+	printf("make place for %d elems\n", len);
+	struct cup* map = malloc((len+1) * sizeof(struct cup));
+
 	int min = INT_MAX; int max = INT_MIN;
 	for(int i = 0; i < len; i++){
-		struct cup* cup = malloc(sizeof(struct cup));
+		struct cup* cup = map + (input->content[0][i] - '0');
 		cup->label = input->content[0][i] - '0';
-		TAILQ_INSERT_TAIL(clock, cup, link);
+		insert_tail(clock, cup);
 		if (cup->label < min)
 			min = cup->label;
 		if (cup->label > max)
 			max = cup->label;
 	}
 
-	struct cup* active = TAILQ_FIRST(clock);
-	for(int i = 0; i < 100; ++i){
-		/* print(clock, active); */
-		active = step(clock, active, min, max);
-		/* print(clock, active); */
-		/* printf("\n"); */
-	}
+	step(clock, map, min, max, 100, 1);
+
 	printFinal(clock);
 	return 0;
 }
 
-#define size 1000000 // 1 000 000
+#define size2 1000000 // 1 000 000
+// #define size2 10000 // 10 000
 
-#define rounds 10000000 // 10 000 000
-// #define rounds 1000 // 1 000
+#define rounds2 10000000 // 10 000 000
+// #define rounds2 1000 // 1 000
 
-int part2(struct string_content* input){
+# define steps2 10
+
+
+// idea of using an array as some sort of map from https://bitbucket.org/ainwood87/aoc/src/master/day23x/main.c
+long part2(struct string_content* input){
 	int len = strlen(input->content[0]);
+
 	struct clock* clock = malloc(sizeof(struct clock));
 	TAILQ_INIT(clock);
+
+	struct cup* map = malloc((size2+1) * sizeof(struct cup));
+
 	int min = INT_MAX; int max = INT_MIN;
 	for(int i = 0; i < len; i++){
-		struct cup* cup = malloc(sizeof(struct cup));
+		struct cup* cup = map + (input->content[0][i] - '0');
 		cup->label = input->content[0][i] - '0';
-		TAILQ_INSERT_TAIL(clock, cup, link);
+		insert_tail(clock, cup);
 		if (cup->label < min)
 			min = cup->label;
 		if (cup->label > max)
 			max = cup->label;
 	}
-	for(int i = max; i <= max+(size-len); i++){
-		struct cup* cup = malloc(sizeof(struct cup));
+	for(int i = max+1; i <= max+(size2-len); i++){
+		struct cup* cup = map + (i);
 		cup->label = i;
-		TAILQ_INSERT_TAIL(clock, cup, link);
+		insert_tail(clock, cup);
 	}
-	max = max+(size-len);
+	max = max+(size2-len);
+	step(clock, map, min, max, rounds2, steps2);
 
-	struct cup* active = TAILQ_FIRST(clock);
-
-	for(int i = 0; i < rounds; ++i){
-		if(i % (rounds/1000) == 0)
-			printf("Progress: %d of %d\n", i / (rounds/1000), rounds / (rounds/1000));
-		/* print(clock, active); */
-		active = step(clock, active, min, max);
-		/* print(clock, active); */
-		/* printf("\n"); */
-	}
-	struct cup* one = find(clock, 1);
+	struct cup* one = find(map, 1);
 
 	struct cup* two = TAILQ_NEXT(one, link);
 	if(two == NULL) two = TAILQ_FIRST(clock);
@@ -155,7 +180,7 @@ int part2(struct string_content* input){
 
 	printf("Fst after 1: %d\n", two->label);
 	printf("Snd after 1: %d\n", three->label);
-	return 0;
+	return (long)two->label * three->label;
 }
 
 int main() {
@@ -163,12 +188,12 @@ int main() {
 	(void)type;
 
 	struct string_content *input;
-	input = read_file("./day-23.dat.testing", type);
+	input = read_file("./day-23.dat", type);
 	printf("Part1:\n%d\n", part1(input));
-	free_file(input);
 
-	input = read_file("./day-23.dat.testing", type);
-	printf("\nPart2:\n%d\n", part2(input));
+	input = read_file("./day-23.dat", type);
+	printf("\nPart2:\n%ld\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;
 }
+// TODO free DS
