@@ -11,3 +11,4 @@
 *.o
 # *.testing*
 *py
+*.perf
