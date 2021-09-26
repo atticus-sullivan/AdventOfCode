@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "tree.h"
-#include "queue.h"
+#include <bsd/sys/tree.h>
+#include <bsd/sys/queue.h>
 
 #include "./read_file.h"
 

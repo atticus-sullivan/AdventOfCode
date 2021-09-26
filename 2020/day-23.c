@@ -4,8 +4,8 @@
 #include <limits.h>
 
 #include "./read_file.h"
-#include "queue.h"
-#include "tree.h"
+#include <bsd/sys/tree.h>
+#include <bsd/sys/queue.h>
 
 
 struct cup {
