@@ -75,4 +75,4 @@ read_file.o: read_file.c read_file.h
 	$(CC)  $(SANITIZE) $(OPTIMIZATION) -c -o $@ $< $(WFLAGS)
 
 clean:
-	$(RM) $(targets) read_file.o $(asantargets) $(lsantargets) $(ubsantargets) $(tsantargets) $(stattargets) $(valgrindtargets) $(perftargets) $(perftargets).perf
+	$(RM) $(targets) read_file.o $(asantargets) $(lsantargets) $(ubsantargets) $(tsantargets) $(stattargets) $(valgrindtargets) $(perftargets) $(perftargets).perf day-20_img.o day-20_tile.o

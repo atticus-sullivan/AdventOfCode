@@ -64,8 +64,8 @@ struct clock* step(struct clock* clock, struct cup* map, int min, int max, int r
 	struct cup* active = TAILQ_FIRST(clock);
 	/* print(clock, active); */
 	for(int i = 0; i < rounds; ++i){
-		if(i % (rounds/steps) == 0)
-			printf("Progress: %d of %d\n", i / (rounds/steps), steps);
+		if(i % (rounds/steps) == 0){}
+			/* printf("Progress: %d of %d\n", i / (rounds/steps), steps); */
 		// remove taken cups
 		struct cup* n1 = TAILQ_NEXT(active, link);
 		if(n1 == NULL) n1 = TAILQ_FIRST(clock);
@@ -114,7 +114,7 @@ int part1(struct string_content* input){
 	struct clock* clock = malloc(sizeof(struct clock));
 	TAILQ_INIT(clock);
 
-	printf("make place for %d elems\n", len);
+	/* printf("make place for %d elems\n", len); */
 	struct cup* map = malloc((len+1) * sizeof(struct cup));
 
 	int min = INT_MAX; int max = INT_MIN;
@@ -178,8 +178,8 @@ long part2(struct string_content* input){
 	struct cup* three = TAILQ_NEXT(two, link);
 	if(three == NULL) three = TAILQ_FIRST(clock);
 
-	printf("Fst after 1: %d\n", two->label);
-	printf("Snd after 1: %d\n", three->label);
+	/* printf("Fst after 1: %d\n", two->label); */
+	/* printf("Snd after 1: %d\n", three->label); */
 	return (long)two->label * three->label;
 }
 
