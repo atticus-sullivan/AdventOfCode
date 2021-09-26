@@ -12,7 +12,7 @@ DEBUG=-DDEBUG_EXT -DDEBUG
 DEBUG=-DDEBUG
 DEBUG=
 
-LIST = 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+LIST = 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
 targets         = $(addprefix day, $(LIST))
 
 asantargets     = $(addsuffix -asan,     $(targets))
@@ -61,6 +61,15 @@ $(perftargets): day%-perf: day-%.c read_file.o
 
 $(targets): day%: day-%.c read_file.o
 	$(CC) $(DEBUG) $(SANITIZE) $(OPTIMIZATION) -o $@ $^ $(WFLAGS) $(LFLAGS)
+
+day20: day-20.c day-20_img.o day-20_tile.o read_file.o
+	$(CC) $(DEBUG) $(SANITIZE) $(OPTIMIZATION) -o $@ $^ $(WFLAGS) $(LFLAGS)
+
+day-20_img.o: day-20_img.c
+	$(CC)  $(SANITIZE) $(OPTIMIZATION) -c -o $@ $< $(WFLAGS)
+day-20_tile.o: day-20_tile.c
+	$(CC)  $(SANITIZE) $(OPTIMIZATION) -c -o $@ $< $(WFLAGS)
+
 
 read_file.o: read_file.c read_file.h
 	$(CC)  $(SANITIZE) $(OPTIMIZATION) -c -o $@ $< $(WFLAGS)
