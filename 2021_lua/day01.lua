@@ -10,6 +10,7 @@ local function part1(file)
 	return ret
 end
 
+---param File file
 local function part2(file)
 	local ret = 0
 	local lastSum = nil

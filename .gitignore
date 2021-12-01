@@ -13,3 +13,5 @@
 *py
 *.perf
 *.bak
+.sess
+.link.md
