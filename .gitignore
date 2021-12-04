@@ -15,3 +15,5 @@
 *.bak
 .sess
 .link.md
+*.testing*
+*.dat
