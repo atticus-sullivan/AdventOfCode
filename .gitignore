@@ -17,3 +17,5 @@
 .link.md
 *.testing*
 *.dat
+*.html
+*.html.orig
