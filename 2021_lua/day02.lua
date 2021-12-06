@@ -1,3 +1,5 @@
+local _M = {}
+
 local part1 = {}
 function part1.forward(pos, x) pos.hor   = pos.hor   + x end
 function part1.up(pos, x)      pos.depth = pos.depth - x end
@@ -33,11 +35,7 @@ local function part(file, funcSet)
 	return pos.hor * pos.depth
 end
 
-local file
-file = io.open("./day02.dat")
-print("Part1:", part(file, part1))
-file:close()
+function _M.part1(file) return part(file, part1) end
+function _M.part2(file) return part(file, part2) end
 
-file = io.open("./day02.dat")
-print("Part2:", part(file, part2))
-file:close()
+return _M

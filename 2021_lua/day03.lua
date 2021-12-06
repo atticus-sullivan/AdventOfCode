@@ -1,5 +1,6 @@
+local _M = {}
 
-local function part1(file)
+function _M.part1(file)
 	local vert = {}
 	for line in file:lines() do
 		local i = 1
@@ -35,7 +36,7 @@ local function copyTable(t)
 	return res
 end
 
-local function part2(file)
+function _M.part2(file)
 	local function mostCommon(lines, index)
 		local ones  = 0
 		local zeros = 0
@@ -72,11 +73,4 @@ local function part2(file)
 	return co2*oxygen
 end
 
-local file
-file = io.open("./day03.dat")
-print("Part1:", part1(file))
-file:close()
-
-file = io.open("./day03.dat")
-print("Part2:", part2(file))
-file:close()
+return _M

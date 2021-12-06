@@ -1,4 +1,6 @@
-local function part1(file)
+local _M = {}
+
+function _M.part1(file)
 	local ret = 0
 	local n1,n2 = file:read("n"),file:read("n")
 	while n2 do
@@ -6,12 +8,10 @@ local function part1(file)
 		n1 = n2
 		n2 = file:read("n")
 	end
-	file:close()
 	return ret
 end
 
----param File file
-local function part2(file)
+function _M.part2(file)
 	local ret = 0
 	local lastSum = nil
 	local sums = {0, 0, 0}
@@ -33,9 +33,7 @@ local function part2(file)
 		sums[3] = 0
 		n = file:read("n")
 	end
-	file:close()
 	return ret
 end
 
-print("Part1:" .. part1(io.open("./day01.dat", "r")))
-print("Part2:" .. part2(io.open("./day01.dat", "r")))
+return _M

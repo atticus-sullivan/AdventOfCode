@@ -1,22 +1,4 @@
-local colors = require("term.colors")
-
-local function printBoard(b, maxX, maxY)
-	for y = 0,maxY do
-		for x = 0,maxX do
-			local index = string.format("%d|%d", x, y)
-			if b[index] then
-				if b[index] >= 2 then
-					io.write(string.format("%s%1d%s", colors.red, b[index], colors.reset))
-				else
-					io.write(string.format("%1d", b[index]))
-				end
-			else
-				io.write(".")
-			end
-		end
-		io.write("\n")
-	end
-end
+local _M = {}
 
 local function parseFile(file, pred)
 	local ret = {}
@@ -79,7 +61,6 @@ local function part(file, pred, tick)
 		if tonumber(v.y1) > maxY then maxY = tonumber(v.y1) end if tonumber(v.y2) > maxY then maxY = tonumber(v.y2) end
 		tick(board, v)
 	end
-	-- printBoard(board, maxX, maxY)
 	local ret = 0
 	for _,f in pairs(board) do
 		if f >= 2 then ret = ret+1 end
@@ -87,11 +68,7 @@ local function part(file, pred, tick)
 	return ret
 end
 
-local file
-file = io.open("./day05.dat")
-print("Part2:", part(file, part1.pred, part1.tick))
-file:close()
+function _M.part1(file) return part(file, part1.pred, part1.tick) end
+function _M.part2(file) return part(file, part2.pred, part2.tick) end
 
-file = io.open("./day05.dat")
-print("Part2:", part(file, part2.pred, part2.tick))
-file:close()
+return _M
