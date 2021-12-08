@@ -64,12 +64,18 @@ local day = require("day"..arg[1])
 local file
 if not arg[2] or arg[2] == "1" then
 	file = io.open("day"..arg[1]..".dat")
-	print("Part1:", day.part1(file), os.clock())
+	local s = os.clock()
+	local r = day.part1(file)
+	local e = os.clock()
+	print("Part1:", r, e-s)
 	file:close()
 end
 
 if not arg[2] or arg[2] == "2" then
 	file = io.open("day"..arg[1]..".dat")
-	print("Part2:", day.part2(file), os.clock())
+	local s = os.clock()
+	local r = day.part2(file)
+	local e = os.clock()
+	print("Part2:", r, e-s)
 	file:close()
 end
