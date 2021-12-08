@@ -19,8 +19,7 @@ function DeepCopyTable(t)
 end
 function PrintTable(t, shift)
 	local function printTable(t, indent)
-		if type(t) ~= "table" then io.write(string.rep(" ", indent), t, "\n") return end
-		local res = {}
+		if type(t) ~= "table" then io.write(string.rep(" ", indent), tostring(t), "\n") return end
 		for k,v in pairs(t) do
 			io.write(string.rep(" ", indent), k, " -> \n")
 			printTable(v, indent+(shift or 2))
@@ -28,18 +27,49 @@ function PrintTable(t, shift)
 	end
 	printTable(t, 0)
 end
+function SetInsert(set, ele)
+	if set[ele] ~= nil then return nil end
+	set[ele] = true
+	return ele
+end
+function SetRemove(set, ele)
+	set[ele] = nil
+	return ele
+end
+function SetUnion(a, b)
+	local ret = {}
+	for k,_ in pairs(a) do
+		ret[k] = true
+	end
+	for k,_ in pairs(b) do
+		ret[k] = true
+	end
+	return ret
+end
+function SetIntersect(a, b)
+	local ret = {}
+	for k,_ in pairs(a) do
+		if b[k] == true and a[k] == true then
+			ret[k] = true
+		else
+			ret[k] = false
+		end
+	end
+	return ret
+end
+
 
 local day = require("day"..arg[1])
 
 local file
 if not arg[2] or arg[2] == "1" then
 	file = io.open("day"..arg[1]..".dat")
-	print("Part1:", day.part1(file))
+	print("Part1:", day.part1(file), os.clock())
 	file:close()
 end
 
 if not arg[2] or arg[2] == "2" then
 	file = io.open("day"..arg[1]..".dat")
-	print("Part2:", day.part2(file))
+	print("Part2:", day.part2(file), os.clock())
 	file:close()
 end
