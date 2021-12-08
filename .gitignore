@@ -19,3 +19,5 @@
 *.dat
 *.html
 *.html.orig
+get_problem.lua
+static/
