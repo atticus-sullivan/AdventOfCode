@@ -1,28 +1,5 @@
 local _M = {}
 
-local function parse_file(file)
-	local ret,cnt = {},0
-	for line in file:lines() do
-		local display = {fst={}, snd={}}
-		local state = 1
-		for signal in line:gmatch("[abcdefg|]+") do
-			if signal == "|" then state = state+1
-			elseif state == 1 then
-				table.insert(display.fst, signal)
-			elseif state == 2 then
-				table.insert(display.fst, signal)
-				if #signal == 2  or #signal == 4 or #signal == 3 or #signal == 7 then
-					cnt = cnt+1
-				end
-			else
-				error(string.format("Error while parsing line %s signal %s state %d", line, signal, state))
-			end
-		end
-		table.insert(ret, display)
-	end
-	return ret,cnt
-end
-
 function _M.part1(file)
 	local cnt = 0
 	for line in file:lines() do
@@ -86,12 +63,11 @@ function _M.part2(file)
 		return nil
 	end
 
-	file = io.open("day08.dat")
-
 	local sum = 0
 	local map,mapR,fives,sixes
+	local display,state
 	for line in file:lines() do
-		local display,state = {},1
+		display,state = {},1
 		map,mapR,fives,sixes = {},{},{},{}
 		for signal in line:gmatch("[abcdefg|]+") do
 			if signal == "|" then state = state+1
@@ -135,14 +111,12 @@ function _M.part2(file)
 		mapR[9] = sixes[1]
 
 		for k,v in pairs(mapR) do
-			local x = array_to_sorted_string(table_to_array(v))
-			map[x] = k
+			map[array_to_sorted_string(table_to_array(v))] = k
 		end
 
 		local num = ""
 		for _,out in ipairs(display) do
-			local x = array_to_sorted_string(string_to_array(out))
-			num = num .. tostring(map[x])
+			num = num .. tostring(map[array_to_sorted_string(string_to_array(out))])
 		end
 		sum = sum + tonumber(num)
 	end
