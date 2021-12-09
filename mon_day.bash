@@ -1,10 +1,16 @@
 #!/bin/bash
 
-if [[ "$1" != [0-9][0-9] ]] ; then
+day="$1"
+
+if [[ "$day" == "" ]] ; then
+	day="$(date +%d)"
+fi
+
+if [[ "$day" != [0-9][0-9] ]] ; then
 	echo "First parameter must be the number of the day"
 	exit -1
 fi
 
 eval $(luarocks path)
 
-luamon -t ../aoc.lua -- "$1"
+luamon -t ../aoc.lua -- "$day"
