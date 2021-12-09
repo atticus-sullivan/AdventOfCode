@@ -57,6 +57,13 @@ function SetIntersect(a, b)
 	end
 	return ret
 end
+function SetLen(s)
+	local len = 0
+	for _,v in pairs(s) do
+		if v then len = len + 1 end
+	end
+	return len
+end
 
 
 local day = require("day"..arg[1])
