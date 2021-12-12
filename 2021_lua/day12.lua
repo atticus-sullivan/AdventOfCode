@@ -14,21 +14,22 @@ local function parse_file(file)
 	return caves
 end
 
-local function print_paths(paths)
-	for _,p in ipairs(paths) do
-		for _,n in ipairs(p) do
-			io.write(n, ",")
+local function print_path(path)
+	io.write("{")
+	for n,c in pairs(path) do
+		if c > 0 then
+			io.write(n, "->", c, " , ")
 		end
-		io.write("\n")
 	end
+	io.write("}\n")
 end
 
 local function search(caves, can_visit)
-	local paths = {}
+	local paths = 0
 	local function searchR(curr, dst, path)
-		table.insert(path, curr)
+		path[curr] = path[curr] and path[curr] + 1 or 1
 		if curr == dst then
-			table.insert(paths, ShallowCopyTable(path))
+			paths = paths + 1
 		else
 			for _,n in ipairs(caves[curr].conn) do
 				if can_visit(caves, path, n) then
@@ -36,7 +37,7 @@ local function search(caves, can_visit)
 				end
 			end
 		end
-		table.remove(path)
+		path[curr] = path[curr] - 1
 	end
 	searchR("start", "end", {})
 	return paths
@@ -45,23 +46,16 @@ end
 local can_visit = {
 	part1 = function (caves, path, node)
 		if caves[node].big then return true end
-		for _,v in ipairs(path) do
-			if node == v then return false end
-		end
-		return true
+		return not path[node] or path[node] == 0
 	end,
 	part2 = function (caves, path, node)
 		if caves[node].big then return true end
-		local cnt = {}
-		for _,v in ipairs(path) do
-			if not caves[v].big then
-				cnt[v] = cnt[v] and cnt[v] + 1 or 1
-			end
-		end
-		if not cnt[node] then return true end
+		local cnt = path
+
+		if not cnt[node] or cnt[node] == 0 then return true end
 		if node == "start" then return false end
-		for _,v in pairs(cnt) do
-			if v >= 2 then return false end
+		for k,v in pairs(cnt) do
+			if v >= 2 and not caves[k].big then return false end
 		end
 		return true
 	end
@@ -70,7 +64,7 @@ local can_visit = {
 local function part(file, can_visit)
 	local caves = parse_file(file)
 	local paths = search(caves, can_visit)
-	return #paths
+	return paths
 end
 
 function _M.part1(file)
