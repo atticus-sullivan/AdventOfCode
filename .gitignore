@@ -21,3 +21,6 @@
 *.html.orig
 get_problem.lua
 static/
+compile_commands.json
+build
+.cache
