@@ -1,12 +1,11 @@
 #include <algorithm>
-#include <concepts>
-#include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <iterator>
 #include <ranges>
 #include <string>
 #include <string_view>
+#include <vector>
 
 struct pass_info {
   bool part1, part2;

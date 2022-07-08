@@ -27,7 +27,7 @@ int part2(const std::vector<std::string>& input){
 }
 
 int main() {
-	auto f = readFile("day-03.dat");
+	auto f = readFile("../day-03.dat");
 	std::cout << "Part1:\n" << part1(f) << "\n\n";
 	std::cout << "Part2:\n" << part2(f) << "\n";
 }
