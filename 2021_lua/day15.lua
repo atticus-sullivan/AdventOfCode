@@ -1,3 +1,6 @@
+local colors = require("term.colors")
+local term   = require("term")
+
 local _M = {}
 
 local function parse_file(file)
@@ -44,13 +47,26 @@ local function inc(b)
 	b.mima.maxy = b.mima.maxy + (b.mima.maxy+1)*4
 end
 
-local function print_board(b, path)
-	path = path or {}
+local function print_board(b, pq, pre)
+	local function in_pq(pq, c)
+		if not c.acc then return false end
+		if not pq.q[c.acc] then return false end
+		for _,e in ipairs(pq.q[c.acc]) do
+			if e == c then return true end
+		end
+		return false
+	end
+	if graphic then
+		term.clear()
+		term.cursor['goto'](1, 1)
+		if pre then print(pre) end
+	end
+	pq = pq or {}
 	for y = b.mima.miny, b.mima.maxy do
 		for x = b.mima.minx, b.mima.maxx do
 			local c = string.format("%d,%d", x,y)
-			if path[c] then
-				io.write(b.board[c].risk)
+			if in_pq(pq, b.board[c]) and graphic then
+				io.write(colors.red(b.board[c].risk))
 			else
 				io.write(b.board[c].risk)
 			end
@@ -104,9 +120,14 @@ local function pq_delMin(pq)
 	return r
 end
 
-local function dijkstra(b)
+local function dijkstra(b, pre)
 	local pq = {q={}, min=1000000000}
 	pq_insert(pq, b.board["0,0"], 0)
+
+	if graphic and pre then
+		print_board(b, pq, pre)
+		os.execute("sleep 0.1")
+	end
 
 	while not pq_empty(pq) do
 		local v = pq_delMin(pq)
@@ -123,6 +144,10 @@ local function dijkstra(b)
 				elseif acc < w.acc then
 					pq_decKey(pq, w, acc)
 				end
+				if graphic and pre then
+					print_board(b, pq, pre)
+					os.execute("sleep 0.01")
+				end
 			end
 		end
 	end
@@ -130,10 +155,12 @@ local function dijkstra(b)
 end
 
 function _M.part1(file)
-	-- file = io.open("./day15.dat.testing")
+	if graphic then
+		file = io.open("./day15.dat.testing")
+	end
 	local b = parse_file(file)
 	-- print_board(b)
-	return dijkstra(b)
+	return dijkstra(b, "Part1")
 end
 
 function _M.part2(file)
@@ -141,7 +168,7 @@ function _M.part2(file)
 	local b = parse_file(file)
 	inc(b)
 	-- print_board(b)
-	return dijkstra(b)
+	return dijkstra(b, false)
 end
 
 return _M

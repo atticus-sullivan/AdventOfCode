@@ -1,4 +1,5 @@
 local colors = require("term.colors")
+local term   = require("term")
 
 local _M = {}
 
@@ -14,7 +15,12 @@ local function parse_file(file)
 	return field
 end
 
-local function print_field(field)
+local function print_field(field, pre)
+	if graphic then
+		term.clear()
+		term.cursor['goto'](1, 1)
+		if pre then print(pre) end
+	end
 	for _,r in ipairs(field) do
 		for _,c in ipairs(r) do
 			if c == 0 then
@@ -61,9 +67,15 @@ end
 
 function _M.part1(file)
 	local field = parse_file(file)
+	if graphic then print_field(field, "Part1:") end
+
 	local sum = 0
 	for i=1,100 do
 		sum = sum + step(field)
+		if graphic then
+			print_field(field, "Part2:")
+			os.execute("sleep 0.05")
+		end
 	end
 	return sum
 end
@@ -78,10 +90,15 @@ function _M.part2(file)
 		return true
 	end
 	local field = parse_file(file)
+	if graphic then print_field(field, "Part2:") end
 
 	local i = 1
 	while true do
 		step(field)
+		if graphic then
+			print_field(field, "Part2:")
+			os.execute("sleep 0.01")
+		end
 		if all_flash(field) then return i end
 		i = i + 1
 	end

@@ -1,3 +1,5 @@
+local term   = require("term")
+
 local _M = {}
 
 local function parse_file(file)
@@ -26,7 +28,12 @@ local function parse_file(file)
 	return {board=board, fold=fold, mimax=mimax}
 end
 
-local function print_board(b)
+local function print_board(b, pre)
+	if graphic then
+		term.clear()
+		term.cursor['goto'](1, 1)
+		if pre then print(pre) end
+	end
 	local mimax,board = b.mimax, b.board
 	for y=mimax.miny,mimax.maxy do
 		for x=mimax.minx,mimax.maxx do
@@ -91,6 +98,7 @@ end
 function _M.part2(file)
 	-- file = io.open("./day13.dat.testing")
 	local b = parse_file(file)
+	if graphic then print_board(b) end
 
 	local fold_ = DeepCopyTable(b.fold)
 	for _,f in ipairs(fold_) do
@@ -99,11 +107,14 @@ function _M.part2(file)
 		else
 			b = foldy(b, f.val)
 		end
+		if graphic then
+			print_board(b, "Part2")
+			os.execute("sleep 0.1")
+		end
 	end
 	print()
 	print_board(b)
 	print()
-	return board_count(b.board)
 end
 
 return _M
