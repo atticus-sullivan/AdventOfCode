@@ -15,7 +15,7 @@
 *.bak
 .sess
 .link.md
-*.testing*
+*.*testing*
 *.dat
 *.html
 *.html.orig
