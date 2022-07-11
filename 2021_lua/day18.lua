@@ -1,8 +1,25 @@
 local utils = require("aocutils")
 
+local lpeg = require"lpeg"
+
+local function pair_grammar()
+	local R, V, C, Ct, P = lpeg.R, lpeg.V, lpeg.C, lpeg.Ct, lpeg.P
+
+	local number = R'09' ^ 1
+	local grammar = P{
+		"branch",
+		branch  = Ct('[' * V'element' * ',' * V'element' * ']'),
+		element = C(number) + V'branch',
+	}
+	return grammar
+end
+
+
 local _M = {}
 
-Pair = {}
+Pair = {
+	grammar=pair_grammar()
+}
 function Pair:new(o) -- key/value passing
 	if getmetatable(o) == Pair then
 		o = {left=o.left, right=o.right}
@@ -19,36 +36,26 @@ function Pair:clone()
 	}
 end
 function Pair.parse(s)
-	s = s:sub(2, -2) -- remove first and last character (unpacking)
+	local r = Pair.grammar:match(s)
 
-	-- parse left side
-	local l,left = s:match("^%b[]")
-	if l then
-		-- left side is a pair
-		left = Pair.parse(l)
-		-- remove parsed stuff
-		s = s:gsub("^%b[],", "")
-	else
-		-- left side is a number
-		left = tonumber(s:match("^%d+"))
-		-- remove parsed stuff
-		s = s:gsub("^%d+,", "")
+	local function new(x)
+		local l
+		if type(x[1]) == "table" then
+			l = new(x[1])
+		else
+			l = tonumber(x[1])
+		end
+		local r
+		if type(x[2]) == "table" then
+			r = new(x[2])
+		else
+			r = tonumber(x[2])
+		end
+
+		return Pair:new{left=l, right=r}
 	end
 
-	local r,right = s:match("^%b[]")
-	if r then
-		-- right side is a pair
-		right = Pair.parse(r)
-		-- remove parsed stuff
-		s = s:gsub("^%b[],", "")
-	else
-		-- right side is a number
-		right = tonumber(s:match("^%d+"))
-		-- remove parsed stuff
-		s = s:gsub("^%d+,", "")
-	end
-
-	return Pair:new{left=left, right=right}
+	return new(r)
 end
 function Pair:print(nl)
 	nl = nl == nil and true or false
