@@ -1,5 +1,6 @@
 local colors = require("term.colors")
 local term   = require("term")
+local utils  = require("aocutils")
 
 local _M = {}
 
@@ -80,57 +81,17 @@ local function on_board(b, c)
 		b.mima.miny <= c.y and c.y <= b.mima.maxy
 end
 
-local function pq_empty(pq)
-	return not pq.q[pq.min] or #pq.q[pq.min] <= 0
-end
-
-local function pq_insert(pq, ele, key)
-	-- print("set", ele.x, ele.y, "to", key)
-	ele.acc = key
-	if not pq.q[key] then
-		pq.q[key] = {}
-	end
-	table.insert(pq.q[key], ele)
-	if key < pq.min then pq.min = key end
-	-- print(pq.min, pq.q[pq.min], pq_empty(pq))
-end
-
-local function pq_decKey(pq, ele, key)
-	local ind = 0
-	for i,v in ipairs(pq.q[ele.acc]) do
-		if v == ele then
-			ind = i
-			break
-		end
-	end
-	table.remove(pq.q[ele.acc], ind)
-	pq_insert(pq, ele, key)
-end
-
-local function pq_delMin(pq)
-	local r = table.remove(pq.q[pq.min])
-	if #pq.q[pq.min] <= 0 then
-		pq.q[pq.min] = nil
-
-		pq.min = 100000000000000000000
-		for k,_ in pairs(pq.q) do
-			if k < pq.min then pq.min = k end
-		end
-	end
-	return r
-end
-
 local function dijkstra(b, pre)
 	local pq = {q={}, min=1000000000}
-	pq_insert(pq, b.board["0,0"], 0)
+	utils.pq.insert(pq, b.board["0,0"], 0)
 
 	if graphic and pre then
 		print_board(b, pq, pre)
 		os.execute("sleep 0.1")
 	end
 
-	while not pq_empty(pq) do
-		local v = pq_delMin(pq)
+	while not utils.pq.empty(pq) do
+		local v = utils.pq.delmin(pq)
 		-- print("v", v.x, v.y)
 
 		for _,i in ipairs({{x=1,y=0},{x=-1,y=0},{x=0,y=1},{x=0,y=-1}}) do
@@ -140,9 +101,9 @@ local function dijkstra(b, pre)
 				local acc = v.acc + w.risk
 				-- print("w", w.x, w.y, w.acc, w.risk, type(w.acc))
 				if not w.acc then
-					pq_insert(pq, w, acc)
+					utils.pq.insert(pq, w, acc)
 				elseif acc < w.acc then
-					pq_decKey(pq, w, acc)
+					utils.pq.decKey(pq, w, acc)
 				end
 				if graphic and pre then
 					print_board(b, pq, pre)

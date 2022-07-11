@@ -1,4 +1,5 @@
 local term   = require("term")
+local utils  = require("utils")
 
 local _M = {}
 
@@ -48,7 +49,7 @@ local function print_board(b, pre)
 end
 
 local function fold(b, pos, foo1)
-	local b2 = DeepCopyTable(b)
+	local b2 = utils.table.copy_deep(b)
 	for coord,_ in pairs(b.board) do
 		local x,y = coord:match("(%d+),(%d+)")
 		x,y = tonumber(x),tonumber(y)
@@ -80,7 +81,7 @@ end)
 end
 
 local function board_count(board)
-	return SetLen(board)
+	return utils.set.len(board)
 end
 
 function _M.part1(file)
@@ -100,7 +101,7 @@ function _M.part2(file)
 	local b = parse_file(file)
 	if graphic then print_board(b) end
 
-	local fold_ = DeepCopyTable(b.fold)
+	local fold_ = utils.table.copy_deep(b.fold)
 	for _,f in ipairs(fold_) do
 		if f.dir == "x" then
 			b = foldx(b, f.val)

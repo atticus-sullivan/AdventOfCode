@@ -1,5 +1,7 @@
 local _M = {}
+
 local colors = require("term.colors")
+local utils  = require("utils")
 
 local function parse_file(file)
 	local ret = {}
@@ -81,7 +83,7 @@ function _M.part2(file, pr)
 			   local set = {[string.format("%d|%d", i,j)]=true}
 			   mark_adjacent(field, set, {x=j,y=i}, {x=-10,y=-10})
 			   -- print_marked_field(field, set) print()
-			   table.insert(sizes, SetLen(set))
+			   table.insert(sizes, utils.set.len(set))
 			   -- os.exit()
 			end
 		end

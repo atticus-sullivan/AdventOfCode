@@ -66,6 +66,10 @@ end
 --     https://www.reddit.com/r/adventofcode/comments/ri9kdq/2021_day_17_solutions/
 -- there are some more heuristics which could be applied which v s to check, but I see 
 -- no real clean solution
+-- idea from
+--     https://github.com/Tristan-H11/AdventOfCode21/blob/master/src/main/scala/Day17/Day17.scala
+-- use yVelocity <- yRange.min to 1000
+-- (start with yMin and then go up)
 function _M.part2(file)
 	file = io.open("./day17.dat")
 	local target = parse_file(file)

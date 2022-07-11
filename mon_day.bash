@@ -13,4 +13,4 @@ fi
 
 eval $(luarocks path)
 
-luamon -t ../aoc.lua -- "$day"
+luamon -t aoc.lua -- "$day"
