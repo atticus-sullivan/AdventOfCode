@@ -101,6 +101,27 @@ function _M.set.len(s)
 	end
 	return len
 end
+-- convert a set to an array
+---@param s table set to work on
+---@param a table array to append to (optional)
+---@return table array with the set at its end
+function _M.set.to_arr(s, a)
+	a = a or {}
+	for k,_ in pairs(s) do
+		table.insert(a, k)
+	end
+	return a
+end
+-- remove and return a random set entry
+---@param s table set to work on
+---@return any random popped set value
+function _M.set.pop_rand(s)
+	for v,_ in pairs(s) do
+		s[v] = nil
+		return v
+	end
+	return nil
+end
 -- prints the set
 ---@param s table set to print
 ---@param pr fun(x:any): printable function to print the elements of the set
