@@ -5,21 +5,23 @@ local day = require("day"..arg[1])
 
 graphic = arg[3] == "g"
 
-local file
+local file, r1,r2
 if not arg[2] or arg[2] == "1" or arg[2] == "0" then
 	file = io.open("day"..arg[1]..".dat")
 	local s = os.clock()
-	local r = day.part1(file)
+	r1,r2 = day.part1(file)
 	local e = os.clock()
-	print("Part1:", r, e-s)
+	print("Part1:", r1, e-s)
 	file:close()
 end
 
 if not arg[2] or arg[2] == "2" or arg[2] == "0" then
 	file = io.open("day"..arg[1]..".dat")
 	local s = os.clock()
-	local r = day.part2(file)
+	if not r2 then
+		r2 = day.part2(file)
+	end
 	local e = os.clock()
-	print("Part2:", r, e-s)
+	print("Part2:", r2, e-s)
 	file:close()
 end
