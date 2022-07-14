@@ -7,8 +7,8 @@ function _M.matrix.print(x, n)
 	if n then
 		io.write(n, ":\n")
 	end
-	for _,l in pairs(x) do
-		for _,e in pairs(l) do
+	for _,l in ipairs(x) do
+		for _,e in ipairs(l) do
 			io.write(e, " ")
 		end
 		io.write("\n")
@@ -20,7 +20,7 @@ function _M.vector.print(x, n)
 	if n then
 		io.write(n, ":\n")
 	end
-	for _,e in pairs(x) do
+	for _,e in ipairs(x) do
 		io.write(e, " ")
 	end
 	io.write("\n")
