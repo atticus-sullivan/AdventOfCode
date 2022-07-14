@@ -24,3 +24,4 @@ static/
 compile_commands.json
 build
 .cache
+*xopp
