@@ -272,7 +272,7 @@ end
 ---@param pr fun(x:any): printable function to print the elements of the board
 function _M.board.print(b, pr, graphic)
 	pr = pr or function(x) return x end
-	graphic = graphic or {}
+	graphic = graphic or {pre="", pred=function(x) return x end}
 	if graphic.bool then
 		term.clear()
 		term.cursor['goto'](1, 1)
@@ -282,13 +282,24 @@ function _M.board.print(b, pr, graphic)
 		for x = b.mima.minx, b.mima.maxx do
 			local c = string.format("%d,%d", x,y)
 			if graphic.pred(b.board[c]) and graphic.bool then
-				io.write(colors.red(b.board[c].risk))
+				io.write(colors.red(pr(b.board[c])))
 			else
-				io.write(b.board[c].risk)
+				io.write(pr(b.board[c]))
 			end
 		end
 		io.write("\n")
 	end
+end
+
+function _M.board.count(b, pred)
+	local r = 0
+	for y = b.mima.miny, b.mima.maxy do
+		for x = b.mima.minx, b.mima.maxx do
+			local c = string.format("%d,%d", x,y)
+			if pred(b.board[c]) then r = r + 1 end
+		end
+	end
+	return r
 end
 
 return _M
