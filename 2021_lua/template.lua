@@ -1,3 +1,5 @@
+local utils = require"aocutils"
+
 local _M = {}
 
 local function parse_file(file)
