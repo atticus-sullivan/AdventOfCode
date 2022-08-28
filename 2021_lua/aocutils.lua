@@ -43,6 +43,16 @@ function _M.table.print(t, shift)
 	printTable(t, 0)
 end
 
+function _M.table.serialize(t)
+	if type(t) ~= "table" then return tostring(t) end
+
+	local r = {}
+	for k,v in pairs(t) do
+		table.insert(r, string.format("%s={%s},", k, _M.table.serialize(v)))
+	end
+	return table.concat(r)
+end
+
 -- functions to work on sets (values stored in the keys)
 _M.set = {}
 -- inserts  an element into the set
