@@ -180,6 +180,13 @@ function _M.pq.decKey(pq, ele, key)
 		end
 	end
 	table.remove(pq.q[ele.key], ind)
+	if #pq.q[ele.key] <= 0 then
+		pq.q[ele.key] = nil
+		pq.min = nil
+		for k,_ in pairs(pq.q) do
+			if not pq.min or k < pq.min then pq.min = k end
+		end
+	end
 	_M.pq.insert(pq, ele, key)
 end
 -- search and remove the element with the minimal key
