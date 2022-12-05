@@ -18,13 +18,10 @@ struct Instruction {
 		i = std::move(Instruction{});
 		is.ignore(4); // "move"
 		is >> i.amount;
-		// std::cout << i.amount << std::endl;
 		is.ignore(5); // " from"
 		is >> i.src;
-		// std::cout << i.src << std::endl;
 		is.ignore(3); // " to"
 		is >> i.dst;
-		// std::cout << i.dst << std::endl;
 		is.ignore(1); // "\n"
 
 		return is;
@@ -36,41 +33,36 @@ struct Crates {
 
 
 	void apply(const Instruction& ins, bool part2 = false){
-		// if(part2){
-		// 	auto dst = stacks.at(ins.dst);
-		// 	auto src = stacks.at(ins.src);
-		// 	auto beg = src.end()-ins.amount;
-		// 	auto end = src.end();
-		//
-		// 	std::move(beg,end, dst.end());
-		// 	src.erase(beg, end);
-		// }
-		// else
-		// {
-			for(int i=0; i < ins.amount; i++){
-				if(part2){
-					stacks.at(ins.dst).push_back(stacks.at(ins.src).at(stacks.at(ins.src).size()-ins.amount+i));
-					stacks.at(ins.src).erase(stacks.at(ins.src).end()-ins.amount+i);
-				} else {
-					stacks.at(ins.dst).push_back(stacks.at(ins.src).back());
-					stacks.at(ins.src).pop_back();
-				}
-			}
-		// }
+		auto& dst = stacks.at(ins.dst);
+		auto& src = stacks.at(ins.src);
+		if(part2){
+			auto beg = src.end()-ins.amount;
+			auto end = src.end();
+
+			// std::move(beg, end, std::back_inserter(dst));
+			dst.insert(dst.end(), std::make_move_iterator(beg),
+					std::make_move_iterator(end));
+			src.erase(beg, end);
+		} else {
+			dst.insert(
+					dst.end(), std::make_move_iterator(src.rbegin()),
+					std::make_move_iterator(src.rbegin() + ins.amount));
+			src.erase(src.end() - ins.amount, src.end());
+		}
 	}
 
 	std::string get_word(){
+		std::ostringstream output{};
 		std::string res{};
 		for(const auto& [key,value]: stacks){
-			res = res + value.back();
+			output << value.back();
 		}
-		return res;
+		return output.str();
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, Crates& i) {
 		for(const auto& [key,value]: i.stacks){
 			os << key << "-> {";
-			// os << value.size();
 			for(const auto& ele : value){
 				os << ele << ", ";
 			}
@@ -88,7 +80,6 @@ struct Crates {
 			for(int j=1; true; j++){
 				if(l.length() <= 4*(j-1)+1) break;
 				if(first){
-					// std::cout << "created: " << j << std::endl;
 					i.stacks.insert({j, {}});
 				}
 				// 1, 5, 9
@@ -102,7 +93,6 @@ struct Crates {
 					assert(k == j && "Index not matching the footer");
 					continue;
 				}
-				// std::cout << "end " << j << std::endl;
 				i.stacks.at(j).push_front(c);
 			}
 			first = false;
@@ -122,23 +112,16 @@ int main(int argc, char* argv[]) {
 	Crates cA{};
 	ifs >> cA;
 	std::vector<Instruction> instructions = aocutils::vectorize_ifs<Instruction>(ifs);
-	// std::cout << instructions.size() << std::endl;
 
-	Crates cB = cA;
+	Crates cB = cA; // copy construct to work on same setup again later
 
-	// std::cout << cA;
 	for(const auto& inst : instructions){
 		cA.apply(inst);
-		// std::cout << std::endl;
-		// std::cout << cA;
 	}
 	std::string part1 = cA.get_word();
 
-	// std::cout << cB;
 	for(const auto& inst : instructions){
 		cB.apply(inst, true);
-		// std::cout << std::endl;
-		// std::cout << cB;
 	}
 	std::string part2 = cB.get_word();
 
