@@ -7,14 +7,14 @@
 
 #include "aocutils.h"
 
-struct Game {
+struct Elf {
 	std::vector<int> bag;
 	int calories;
 
 	operator int(){return calories;}
 
-	friend std::istream& operator>>(std::istream& is, Game& i) {
-		i = std::move(Game{});
+	friend std::istream& operator>>(std::istream& is, Elf& i) {
+		i = std::move(Elf{});
 		// std::cout << &i << std::endl;
 		// std::cout << i.bag.size() << std::endl;
 		std::string l;
@@ -35,16 +35,16 @@ int main(int argc, char* argv[]) {
 	if(ifs.fail()){
 		throw std::runtime_error("File couldn't be opened!");
 	}
-	std::vector<Game> elves = aocutils::vectorize_ifs<Game>(ifs);
+	std::vector<Elf> elves = aocutils::vectorize_ifs<Elf>(ifs);
 
 	std::sort(elves.begin(), elves.end(), [](const auto& a, const auto& b) {return a.calories < b.calories;});
 	auto part2 = std::accumulate(elves.end()-3, elves.end(), 0);
-	auto x = elves.end()-1;
+	auto part1 = (elves.end()-1)->calories;
 	// old stuff before the need of sorting the vector
 	// auto x = std::ranges::max_element(elves.begin(), elves.end(), [](const auto& a, const auto& b) {return a.calories < b.calories;});
 
 	std::cout << "Day 01:" << '\n'
-		<< "  Part 1: " << x->calories << std::endl
-		<< "  Part 2: " << part2 << '\n'
+		<< "  Part 1: " << part1 << std::endl
+		<< "  Part 2: " << part2 << std::endl
 		;
 }

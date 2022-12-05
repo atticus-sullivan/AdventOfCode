@@ -21,18 +21,6 @@ long get_prio(char x){
 	throw std::runtime_error("Invalid Rucksack content");
 }
 
-bool contains(int lowA, int highA, int lowB, int highB){
-	return
-		(lowA <= lowB && highA >= highB) ||
-		(lowB <= lowA && highB >= highA);
-}
-bool overlap(int lowA, int highA, int lowB, int highB){
-	bool r =
-		(lowA < lowB && highA < lowB) ||
-		(lowB < lowA && highB < lowA);
-	return !r;
-}
-
 struct Rucksack {
 	Range a, b;
 	bool contained;
