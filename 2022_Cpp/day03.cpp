@@ -8,6 +8,8 @@
 #include <numeric>
 #include <cassert>
 
+#include "aocutils.h"
+
 long get_prio(char x){
 	if('a' <= x && x <= 'z'){
 		return x - 'a' + 1;
@@ -27,6 +29,7 @@ struct Rucksack {
 	long prioA;
 
 	friend std::istream& operator>>(std::istream& is, Rucksack& i) {
+		i = std::move(Rucksack{});
 		std::string l;
 		std::getline(is, l);
 		if(l == "") return is;
@@ -68,7 +71,7 @@ int main(int argc, char* argv[]) {
 	if(ifs.fail()){
 		throw std::runtime_error("File couldn't be opened!");
 	}
-	std::vector<Rucksack> rucksacks{std::istream_iterator<Rucksack>{ifs}, {}};
+	std::vector<Rucksack> rucksacks = aocutils::vectorize_ifs<Rucksack>(ifs);
 
 	auto part1 = std::accumulate(rucksacks.begin(), rucksacks.end(), 0, [](long b, const auto& r){return r.prioA+b;});
 

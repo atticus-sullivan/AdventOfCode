@@ -8,6 +8,9 @@
 #include <numeric>
 #include <cassert>
 
+#include "aocutils.h"
+using Range = aocutils::Range<int>;
+
 long get_prio(char x){
 	if('a' <= x && x <= 'z'){
 		return x - 'a' + 1;
@@ -17,27 +20,6 @@ long get_prio(char x){
 	}
 	throw std::runtime_error("Invalid Rucksack content");
 }
-
-struct Range{
-	int low, high;
-
-	Range(): low{0}, high{0} {}
-	Range(int low, int high): low{low}, high{high} {
-		assert(low <= high && "low <= high");
-	}
-
-	bool contains(Range other){
-		return
-			(low <= other.low && high >= other.high) ||
-			(other.low <= low && other.high >= high);
-	}
-	bool overlap(Range other){
-		bool r =
-			(low <= other.low && high < other.low) ||
-			(other.low <= low && other.high < low);
-		return !r;
-	}
-};
 
 bool contains(int lowA, int highA, int lowB, int highB){
 	return
@@ -57,6 +39,7 @@ struct Rucksack {
 	bool overlapped;
 
 	friend std::istream& operator>>(std::istream& is, Rucksack& i) {
+		i = std::move(Rucksack{});
 		char tmp;
 		int low, high;
 
@@ -83,7 +66,7 @@ int main(int argc, char* argv[]) {
 	if(ifs.fail()){
 		throw std::runtime_error("File couldn't be opened!");
 	}
-	std::vector<Rucksack> rucksacks{std::istream_iterator<Rucksack>{ifs}, {}};
+	std::vector<Rucksack> rucksacks = aocutils::vectorize_ifs<Rucksack>(ifs);
 
 	auto part1 = std::count_if(rucksacks.begin(), rucksacks.end(), [](const auto& a){return a.contained;});
 	auto part2 = std::count_if(rucksacks.begin(), rucksacks.end(), [](const auto& a){return a.overlapped;});

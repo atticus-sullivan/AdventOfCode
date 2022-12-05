@@ -5,6 +5,8 @@
 #include <vector>
 #include <numeric>
 
+#include "aocutils.h"
+
 enum class Outcome {
 	DEFEAT = 0,
 	DRAW   = 3,
@@ -26,6 +28,7 @@ std::string outcome_str(Outcome x){
 		case DRAW:   return "Draw";
 		case WIN:    return "Win";
 	}
+	throw std::runtime_error("Invalid outcome");
 }
 
 enum class Play {
@@ -52,6 +55,7 @@ std::string play_str(Play x){
 		case PAPER:    return "Paper";
 		case SCISSORS: return "Scissors";
 	}
+	throw std::runtime_error("Invalid play");
 }
 
 struct Rucksack {
@@ -92,6 +96,7 @@ struct Rucksack {
 	}
 
 	friend std::istream& operator>>(std::istream& is, Rucksack& i) {
+		i = std::move(Rucksack{});
 		std::string l;
 		std::getline(is, l);
 		if(l != ""){
@@ -110,14 +115,7 @@ int main(int argc, char* argv[]) {
 	if(ifs.fail()){
 		throw std::runtime_error("File couldn't be opened!");
 	}
-	// https://en.cppreference.com/w/cpp/iterator/istream_iterator
-	/* std::istream_iterator is a single-pass input iterator that reads successive
-	 * objects of type T from the std::basic_istream object for which it was
-	 * constructed, by calling the appropriate operator>>.
-	 */
-	auto tmp = std::istream_iterator<Rucksack>{ifs};
-	// Als 2. Parameter wird ein neuer istream_iterator initialisiert ohne Argumente welcher dann ein End-of-stream iterator ist.
-	std::vector<Rucksack> games{tmp, {}};
+	std::vector<Rucksack> games = aocutils::vectorize_ifs<Rucksack>(ifs);
 
 	auto part1 = std::accumulate(games.begin(), games.end(), 0, [](int b, const auto& r){return r.pointsA+b;});
 	auto part2 = std::accumulate(games.begin(), games.end(), 0, [](int b, const auto& r){return r.pointsB+b;});

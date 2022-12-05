@@ -8,12 +8,14 @@
 #include <stack>
 #include <numeric>
 #include <cassert>
+#include "aocutils.h"
 
 struct Instruction {
 	int amount;
 	int src, dst;
 
 	friend std::istream& operator>>(std::istream& is, Instruction& i) {
+		i = std::move(Instruction{});
 		is.ignore(4); // "move"
 		is >> i.amount;
 		// std::cout << i.amount << std::endl;
@@ -47,11 +49,8 @@ struct Crates {
 		// {
 			for(int i=0; i < ins.amount; i++){
 				if(part2){
-					std::cout << "here1" << std::endl;
 					stacks.at(ins.dst).push_back(stacks.at(ins.src).at(stacks.at(ins.src).size()-ins.amount+i));
-					std::cout << "here2" << std::endl;
 					stacks.at(ins.src).erase(stacks.at(ins.src).end()-ins.amount+i);
-					std::cout << "here3" << std::endl;
 				} else {
 					stacks.at(ins.dst).push_back(stacks.at(ins.src).back());
 					stacks.at(ins.src).pop_back();
@@ -113,26 +112,6 @@ struct Crates {
 	}
 };
 
-std::string partA(){
-	std::ifstream ifs{"../day05.dat"};
-	if(ifs.fail()){
-		throw std::runtime_error("File couldn't be opened!");
-	}
-
-	Crates c{};
-	ifs >> c;
-	std::vector<Instruction> instructions{std::istream_iterator<Instruction>{ifs}, {}};
-	std::cout << instructions.size() << std::endl;
-
-	std::cout << c;
-	for(const auto& inst : instructions){
-		c.apply(inst);
-		std::cout << std::endl;
-		std::cout << c;
-	}
-	return c.get_word();
-}
-
 int main(int argc, char* argv[]) {
 	// std::ifstream ifs{"../day05.dat.testing"};
 	std::ifstream ifs{"../day05.dat"};
@@ -140,22 +119,31 @@ int main(int argc, char* argv[]) {
 		throw std::runtime_error("File couldn't be opened!");
 	}
 
-	Crates c{};
-	ifs >> c;
-	std::vector<Instruction> instructions{std::istream_iterator<Instruction>{ifs}, {}};
-	std::cout << instructions.size() << std::endl;
+	Crates cA{};
+	ifs >> cA;
+	std::vector<Instruction> instructions = aocutils::vectorize_ifs<Instruction>(ifs);
+	// std::cout << instructions.size() << std::endl;
 
-	std::cout << c;
+	Crates cB = cA;
+
+	// std::cout << cA;
 	for(const auto& inst : instructions){
-		c.apply(inst, true);
-		std::cout << std::endl;
-		std::cout << c;
+		cA.apply(inst);
+		// std::cout << std::endl;
+		// std::cout << cA;
 	}
+	std::string part1 = cA.get_word();
 
-	// std::string part1 = partA();
-	
+	// std::cout << cB;
+	for(const auto& inst : instructions){
+		cB.apply(inst, true);
+		// std::cout << std::endl;
+		// std::cout << cB;
+	}
+	std::string part2 = cB.get_word();
+
 	std::cout << "Day 04:" << '\n'
-		// << "  Part 1: " << part1 << std::endl
-		<< "  Part 2: " << c.get_word() << std::endl
+		<< "  Part 1: " << part1 << std::endl
+		<< "  Part 2: " << part2 << std::endl
 		;
 }
