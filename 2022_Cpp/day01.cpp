@@ -30,8 +30,8 @@ struct Elf {
 };
 
 int main(int argc, char* argv[]) {
-	// std::ifstream ifs{"../day01.dat.testing"};
-	std::ifstream ifs{"../day01.dat"};
+	// std::ifstream ifs{"../problems/day01.dat.testing"};
+	std::ifstream ifs{"../problems/day01.dat"};
 	if(ifs.fail()){
 		throw std::runtime_error("File couldn't be opened!");
 	}

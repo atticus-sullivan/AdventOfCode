@@ -111,8 +111,8 @@ struct Rucksack {
 };
 
 int main(int argc, char* argv[]) {
-	// std::ifstream ifs{"../day02.dat.testing"};
-	std::ifstream ifs{"../day02.dat"};
+	// std::ifstream ifs{"../problems/day02.dat.testing"};
+	std::ifstream ifs{"../problems/day02.dat"};
 	if(ifs.fail()){
 		throw std::runtime_error("File couldn't be opened!");
 	}

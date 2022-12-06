@@ -46,8 +46,8 @@ struct Message {
 };
 
 int main(int argc, char* argv[]) {
-	// std::ifstream ifs{"../day06.dat.testing"};
-	std::ifstream ifs{"../day06.dat"};
+	// std::ifstream ifs{"../problems/day06.dat.testing"};
+	std::ifstream ifs{"../problems/day06.dat"};
 	if(ifs.fail()) throw std::runtime_error("File couldn't be opened!");
 
 	Message m{};
