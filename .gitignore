@@ -25,3 +25,4 @@ compile_commands.json
 build
 .cache
 *xopp
+aoc_cli.bash
