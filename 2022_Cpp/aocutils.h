@@ -2,6 +2,7 @@
 #include <vector>
 #include <concepts>
 #include <cassert>
+#include <algorithm>
 
 #pragma once
 
