@@ -114,14 +114,14 @@ int main() {
 
 	struct string_content *input1;
 	struct string_content *input2;
-	input1 = read_file("./day-11.dat", type);
-	input2 = read_file("./day-11.dat", type);
+	input1 = read_file("./problems/day-11.dat", type);
+	input2 = read_file("./problems/day-11.dat", type);
 	printf("Part1:\nAmount of occupied seats (Prediction 1): %d\n", part(input1, input2, 4, check_seat1));
 	free_file(input1);
 	free_file(input2);
 	
-	input1 = read_file("./day-11.dat", type);
-	input2 = read_file("./day-11.dat", type);
+	input1 = read_file("./problems/day-11.dat", type);
+	input2 = read_file("./problems/day-11.dat", type);
 	printf("\nPart2:\nAmount of occupied seats (Prediction 2): %d\n", part(input1,input2, 5, check_seat2));
 	free_file(input1);
 	free_file(input2);

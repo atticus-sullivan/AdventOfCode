@@ -79,7 +79,7 @@ int main() {
 	long miss;
 
 	struct long_content *input;
-	input = read_file("./day-09.dat", type);
+	input = read_file("./problems/day-09.dat", type);
 	printf("Part1:\nFist number not matching the rule: %ld\n", part1(input, 25, &miss));
 
 	printf("\nPart2:\nMin*Max in range summing up to the miss: %ld\n", part2(input, miss));

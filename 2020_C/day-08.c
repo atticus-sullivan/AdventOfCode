@@ -90,7 +90,7 @@ int main() {
 	char* type;
 	(void)type;
 
-	struct string_content *input = read_file("./day-08.dat", type);
+	struct string_content *input = read_file("./problems/day-08.dat", type);
 	printf("Part1:\nAccumulator when the first instruction is executed twice: %d\n", part1(input));
 
 	printf("\nPart2:\nAccumulator at the end of the program: %d\n", part2(input));

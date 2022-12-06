@@ -49,7 +49,7 @@ int main() {
 	char* type;
 	(void)type;
 
-	struct string_content* input = read_file("./day-03.dat", type);
+	struct string_content* input = read_file("./problems/day-03.dat", type);
 	printf("Part1\nTrees: %d\n", part1(input, 3, 1, 0));
 
 	printf("\nPart2\nTrees: %d\n", part2(input));

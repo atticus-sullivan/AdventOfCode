@@ -235,10 +235,10 @@ int main() {
 	(void)type;
 
 	struct string_content *input;
-	input = read_file("./day-22.dat", type);
+	input = read_file("./problems/day-22.dat", type);
 	printf("Part1:\n%d\n", part1(input));
 
-	input = read_file("./day-22.dat", type);
+	input = read_file("./problems/day-22.dat", type);
 	printf("\nPart2:\n%d\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;

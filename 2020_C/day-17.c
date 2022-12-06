@@ -291,7 +291,7 @@ int main() {
 	(void)type;
 
 	struct string_content *input;
-	input = read_file("./day-17.dat", type);
+	input = read_file("./problems/day-17.dat", type);
 	printf("Part1:\nAmount of active Cubes (3d): %d\n", part1(input));
 	printf("\nPart2:\nAmount of active Hypercubes (4d): %d\n", part2(input));
 	free_file(input);

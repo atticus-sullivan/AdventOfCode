@@ -149,11 +149,11 @@ int main() {
 	regcomp(&eye_r, "^(amb|blu|brn|gry|grn|hzl|oth)$", REG_EXTENDED | REG_NOSUB);
 	regcomp(&pass_r, "^[0-9]{9}$",                     REG_EXTENDED | REG_NOSUB);
 
-	struct string_content *input = read_file("./day-04.dat",type);
+	struct string_content *input = read_file("./problems/day-04.dat",type);
 	printf("Part1\nValid Passports: %d\n", part1_2(input, set_boolean_ele));
 	free_file(input);
 
-	input = read_file("./day-04.dat",type);
+	input = read_file("./problems/day-04.dat",type);
 	printf("\nPart2\nValid Passports: %d\n", part1_2(input, set_boolean_ele2));
 	free_file(input);
 

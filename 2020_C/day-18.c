@@ -155,11 +155,11 @@ int main() {
 	(void)type;
 
 	struct string_content *input;
-	input = read_file("./day-18.dat", type);
+	input = read_file("./problems/day-18.dat", type);
 	printf("Part1:\nSum of the results (no predecence): %lu\n", part1(input));
 	free_file(input);
 	
-	input = read_file("./day-18.dat", type);
+	input = read_file("./problems/day-18.dat", type);
 	printf("\nPart2:\nSum of the results (predecence): %lu\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;

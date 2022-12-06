@@ -110,7 +110,7 @@ int main() {
 	(void)type;
 
 	struct string_content *input;
-	input = read_file("./day-12.dat", type);
+	input = read_file("./problems/day-12.dat", type);
 	printf("Part1:\nManhatten distance: %d\n", part1(input));
 	printf("\nPart2:\nManhatten distance: %d\n", part2(input));
 	free_file(input);

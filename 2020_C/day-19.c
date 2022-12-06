@@ -337,7 +337,7 @@ int main() {
 	(void)type;
 
 	struct string_content *input;
-	input = read_file("./day-19.dat", type);
+	input = read_file("./problems/day-19.dat", type);
 	struct rules_head rules;
 	RB_INIT(&rules);
 

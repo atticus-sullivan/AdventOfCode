@@ -47,7 +47,7 @@ main()
 	(void)type;
 
 	struct string_content *input;
-	input = read_file("./day-20.dat", type);
+	input = read_file("./problems/day-20.dat", type);
 	printf("\n\nPart2:\nWater roughness %d\n", part2(input));
 	free_file(input);
 

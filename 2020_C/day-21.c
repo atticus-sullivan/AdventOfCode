@@ -208,7 +208,7 @@ int main() {
 	struct queue* qu = malloc(sizeof(struct queue));
 	SLIST_INIT(qu);
 
-	input = read_file("./day-21.dat", type);
+	input = read_file("./problems/day-21.dat", type);
 	printf("Part1:\n%d\n", part1(input, algs, qu));
 	
 	printf("\nPart2:\n%d\n", part2(input, algs, qu));

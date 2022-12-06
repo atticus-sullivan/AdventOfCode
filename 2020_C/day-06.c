@@ -68,7 +68,7 @@ int main() {
 	char* type;
 	(void)type;
 
-	struct string_content *input = read_file("./day-06.dat", type);
+	struct string_content *input = read_file("./problems/day-06.dat", type);
 	printf("Part1:\nSum of checked boxes (or): %d\n", part1(input));
 
 	printf("\nPart2:\nSum of checked boxes (and): %d\n", part2(input));

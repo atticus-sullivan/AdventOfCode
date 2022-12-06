@@ -7,7 +7,7 @@ graphic = arg[3] == "g"
 
 local file, r1,r2
 if not arg[2] or arg[2] == "1" or arg[2] == "0" then
-	file = io.open("day"..arg[1]..".dat")
+	file = io.open("problems/day"..arg[1]..".dat")
 	local s = os.clock()
 	r1,r2 = day.part1(file)
 	local e = os.clock()
@@ -16,7 +16,7 @@ if not arg[2] or arg[2] == "1" or arg[2] == "0" then
 end
 
 if not arg[2] or arg[2] == "2" or arg[2] == "0" then
-	file = io.open("day"..arg[1]..".dat")
+	file = io.open("problems/day"..arg[1]..".dat")
 	local s = os.clock()
 	if not r2 then
 		r2 = day.part2(file)

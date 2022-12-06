@@ -219,7 +219,7 @@ int main() {
 	(void)type;
 
 	struct string_content *input;
-	input = read_file("./day-16.dat", type);
+	input = read_file("./problems/day-16.dat", type);
 	int** tickets;
 	struct ticket_fields ticket_fields;
 	printf("Part1:\nAmount of wrong read tickets: %d\n", part1(input, 20, &tickets, &ticket_fields));

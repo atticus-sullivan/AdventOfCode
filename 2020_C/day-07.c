@@ -258,11 +258,11 @@ int main() {
 	char* type;
 	(void)type;
 
-	struct string_content *input = read_file("./day-07.dat", type);
+	struct string_content *input = read_file("./problems/day-07.dat", type);
 	printf("Part1:\nAmount of bags that can contain a gold one: %d\n", part1(input));
 	free_file(input);
 	
-	input = read_file("./day-07.dat", type);
+	input = read_file("./problems/day-07.dat", type);
 	printf("\nPart2:\nAmount of bags that have to fit into a gold one: %d\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;

@@ -63,7 +63,7 @@ int main() {
 	(void)type;
 
 	struct int_content *input;
-	input = read_file("./day-10.dat", type);
+	input = read_file("./problems/day-10.dat", type);
 	qsort(input->content, input->length, sizeof(int), compare);
 
 	printf("Part1:\n#3J * #1J in chain: %d\n", part1(input));

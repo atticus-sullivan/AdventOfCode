@@ -77,7 +77,7 @@ int main() {
 	char* type;
 	(void)type;
 
-	struct string_content* input = read_file("./day-05.dat", type);
+	struct string_content* input = read_file("./problems/day-05.dat", type);
 	printf("Part1\nMax id: %d\n", part1(input, 128, 8));
 
 	printf("\nPart2\nSearched ID: %d\n", part2(input, 128, 8));

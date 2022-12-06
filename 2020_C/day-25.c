@@ -42,11 +42,11 @@ int main() {
 	(void)type;
 
 	struct int_content *input;
-	input = read_file("./day-25.dat", type);
+	input = read_file("./problems/day-25.dat", type);
 	printf("Part1:\n%ld\n", part1(input));
 	free_file(input);
 	
-	input = read_file("./day-25.dat.testing", type);
+	input = read_file("./problems/day-25.dat.testing", type);
 	printf("\nPart2:\n%d\n", part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;

@@ -185,11 +185,11 @@ int main() {
 	(void)type;
 
 	struct string_content *input;
-	input = read_file("./day-13.dat", type);
+	input = read_file("./problems/day-13.dat", type);
 	printf("Part1:\n%d\n", part1(input));
 	free_file(input);
 	
-	input = read_file("./day-13.dat", type);
+	input = read_file("./problems/day-13.dat", type);
 	printf("\nPart2:\n%ld\n", part2b(input,9));
 	free_file(input);
 	return EXIT_SUCCESS;

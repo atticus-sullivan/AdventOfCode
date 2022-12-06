@@ -57,11 +57,11 @@ int main() {
 	char* type;
 	(void)type; // silence unnused but set warning
 
-	struct string_content* input = read_file("./day-02.dat", type);
+	struct string_content* input = read_file("./problems/day-02.dat", type);
 	printf("Part1\nNum Valid: %d\n",part1(input));
 	free_file(input);
 
-	input = read_file("./day-02.dat", type);
+	input = read_file("./problems/day-02.dat", type);
 	printf("\nPart2\nNum Valid: %d\n",part2(input));
 	free_file(input);
 	return EXIT_SUCCESS;

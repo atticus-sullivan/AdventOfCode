@@ -33,7 +33,7 @@ int main(){
 	int type = 0; // only for the generic
 	(void)type; // silence unnused but set warning
 
-	struct int_content *input = read_file("./day-01.dat", type);
+	struct int_content *input = read_file("./problems/day-01.dat", type);
 	printf("Part1\nx: %d\n", part1(input));
 
 	printf("\nPart2\nx: %d\n", part2(input));
