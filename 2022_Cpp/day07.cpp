@@ -1,11 +1,11 @@
+#include <cassert>
 #include <fstream>
 #include <functional>
 #include <iostream>
-#include <vector>
-#include <map>
-#include <cassert>
-#include <memory>
 #include <limits>
+#include <map>
+#include <memory>
+#include <vector>
 
 #include "aocutils.h"
 
@@ -15,47 +15,47 @@ struct FSele
 	FSele(std::string name) : name{name} {}
 	virtual ~FSele() = default;
 
-	virtual int get_size            ()        const = 0;
-	virtual bool is_dir             ()        const = 0;
-	virtual int sum_smaller_dir_than(int)     const = 0;
-	virtual int bigger_than         (int,int) const = 0;
+	virtual int  get_size() const                = 0;
+	virtual bool is_dir() const                  = 0;
+	virtual int  sum_smaller_dir_than(int) const = 0;
+	virtual int  bigger_than(int, int) const     = 0;
 };
 struct FSfile : FSele
 {
 	int size;
 	FSfile(std::string name, int size) : size{size}, FSele(name) {}
 
-	int get_size() const override { return size; }
-	bool is_dir()  const override { return false; }
-	int sum_smaller_dir_than(int) const override {throw std::runtime_error("Not implemented");};
-	int bigger_than(int, int)     const override {throw std::runtime_error("Not implemented");};
+	int  get_size() const override { return size; }
+	bool is_dir() const override { return false; }
+	int  sum_smaller_dir_than(int) const override
+	{
+		throw std::runtime_error("Not implemented");
+	};
+	int bigger_than(int, int) const override
+	{
+		throw std::runtime_error("Not implemented");
+	};
 };
 struct FSdir : FSele
 {
 	std::map<std::string, std::unique_ptr<FSele>> children;
 	FSdir(std::string name) : children{}, FSele(name) {}
 
-	bool is_dir()  const override { return true; }
+	bool is_dir() const override { return true; }
 
 	int get_size() const override
 	{
 		int size{0};
-		for(const auto& [k,v] : children)
-		{
-			size += v->get_size();
-		}
+		for(const auto &[k, v] : children) { size += v->get_size(); }
 		return size;
 	}
 
 	int sum_smaller_dir_than(int size) const override
 	{
 		int sum{0};
-		for(const auto& [k,v] : children)
+		for(const auto &[k, v] : children)
 		{
-			if(v->is_dir())
-			{
-				sum += v.get()->sum_smaller_dir_than(size);
-			}
+			if(v->is_dir()) { sum += v.get()->sum_smaller_dir_than(size); }
 		}
 		if(get_size() < size)
 		{
@@ -67,7 +67,7 @@ struct FSdir : FSele
 
 	int bigger_than(int size, int min_bigger_size) const override
 	{
-		for(const auto& [k,v] : children)
+		for(const auto &[k, v] : children)
 		{
 			if(v->is_dir())
 			{
@@ -75,8 +75,8 @@ struct FSdir : FSele
 			}
 		}
 		if(get_size() > size)
-		{
-			// std::cout << name << " " << get_size() << " vs " << min_bigger_size << std::endl;
+		{ // std::cout << name << " " << get_size() << " vs " << min_bigger_size
+		  // << std::endl;
 			min_bigger_size = std::min(min_bigger_size, get_size());
 			// std::cout << min_bigger_size << std::endl;
 		}
@@ -103,11 +103,11 @@ FSdir parse(std::ifstream ifs)
 		if(l == "cd")
 		{
 			ifs >> l;
-			if(l == "..")
-				path.pop_back();
+			if(l == "..") path.pop_back();
 			else
 				// exception if node is not already known from ls
-				path.push_back(std::ref(dynamic_cast<FSdir&>(*path.back().get().children.at(l).get())));
+				path.push_back(std::ref(dynamic_cast<FSdir &>(
+				    *path.back().get().children.at(l).get())));
 			ifs >> l; // $
 		}
 		else if(l == "ls")
@@ -118,9 +118,12 @@ FSdir parse(std::ifstream ifs)
 				ifs >> name;
 				// std::cout << l << " " << name << std::endl;
 				if(l == "dir")
-					path.back().get().children.insert({name, std::make_unique<FSdir>(FSdir{name})});
+					path.back().get().children.insert(
+					    {name, std::make_unique<FSdir>(FSdir{name})});
 				else
-					path.back().get().children.insert({name, std::make_unique<FSfile>(FSfile{name, std::stoi(l)})});
+					path.back().get().children.insert(
+					    {name,
+					     std::make_unique<FSfile>(FSfile{name, std::stoi(l)})});
 				ifs >> l;
 			}
 		}
@@ -134,14 +137,14 @@ FSdir parse(std::ifstream ifs)
 	return root;
 }
 
-int partB(const FSdir& root)
+int partB(const FSdir &root)
 {
 	int need_to_free = 30000000 - (70000000 - root.get_size());
 	// std::cout << "needs: " << need_to_free << std::endl;
 	return root.bigger_than(need_to_free, std::numeric_limits<int>::max());
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	// std::ifstream ifs{"../problems/day07.dat.testing"};
 	std::ifstream ifs{"../problems/day07.dat"};
@@ -155,7 +158,6 @@ int main(int argc, char* argv[])
 	int part2 = partB(root);
 
 	std::cout << "Day 04:" << '\n'
-		<< "  Part 1: " << part1 << std::endl
-		<< "  Part 2: " << part2 << std::endl
-		;
+	          << "  Part 1: " << part1 << std::endl
+	          << "  Part 2: " << part2 << std::endl;
 }
