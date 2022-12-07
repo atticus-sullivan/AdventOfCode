@@ -1,0 +1,115 @@
+---
+Language: Cpp
+BasedOnStyle:  LLVM
+AccessModifierOffset: -2
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Left
+AlignConsecutiveMacros: Consecutive
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveDeclarations: Consecutive
+AlignEscapedNewlines: Left
+AlignOperands:   Align
+AlignTrailingComments: true
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortEnumsOnASingleLine: true
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: true
+BinPackArguments: true
+BinPackParameters: true
+BraceWrapping:
+  AfterCaseLabel:  true
+  AfterClass:      true
+  AfterControlStatement: MultiLine
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  true
+#   AfterObjCDeclaration: false
+#   AfterStruct:     false
+#   AfterUnion:      false
+#   AfterExternBlock: false
+#   BeforeCatch:     false
+#   BeforeElse:      false
+#   BeforeLambdaBody: false
+#   BeforeWhile:     false
+#   IndentBraces:    false
+#   SplitEmptyFunction: true
+#   SplitEmptyRecord: true
+#   SplitEmptyNamespace: true
+BreakBeforeBinaryOperators: None
+BreakBeforeConceptDeclarations: true
+BreakBeforeBraces: Allman # evtl Linux, Stroustrup, WebKit or Mozilla
+BreakBeforeTernaryOperators: true
+BreakStringLiterals: false
+ColumnLimit:     80
+ContinuationIndentWidth: 4
+DeriveLineEnding: true # TODO setting
+DerivePointerAlignment: false # TODO setting
+DisableFormat:   false
+ExperimentalAutoDetectBinPacking: false
+FixNamespaceComments: true
+# ForEachMacros:
+#   - foreach
+#   - Q_FOREACH
+#   - BOOST_FOREACH
+# IfMacros:
+#   - KJ_IF_MAYBE
+IncludeBlocks:   Preserve
+# IncludeCategories:
+#   - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
+#     Priority:        2
+#     SortPriority:    0
+#     CaseSensitive:   false
+#   - Regex:           '^(<|"(gtest|gmock|isl|json)/)'
+#     Priority:        3
+#     SortPriority:    0
+#     CaseSensitive:   false
+#   - Regex:           '.*'
+#     Priority:        1
+#     SortPriority:    0
+#     CaseSensitive:   false
+IndentCaseLabels: true
+IndentCaseBlocks: false
+IndentGotoLabels: true
+IndentPPDirectives: BeforeHash
+IndentExternBlock: AfterExternBlock
+IndentWidth:     4
+IndentWrappedFunctionNames: false
+MaxEmptyLinesToKeep: 1
+PointerAlignment: Right
+PPIndentWidth:   -1
+ReferenceAlignment: Pointer
+ReflowComments:  true
+SortIncludes:    CaseSensitive
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeParens: Never
+SpaceAroundPointerQualifiers: Default
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles:  Never
+SpacesInConditionalStatement: false
+SpacesInCStyleCastParentheses: false
+SpacesInLineCommentPrefix:
+  Minimum:         1
+  Maximum:         -1
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceBeforeSquareBrackets: false
+Standard:        Latest
+# StatementAttributeLikeMacros:
+#   - Q_EMIT
+# StatementMacros:
+#   - Q_UNUSED
+#   - QT_REQUIRE_VERSION
+TabWidth:        4
+UseCRLF:         false
+UseTab:          ForContinuationAndIndentation

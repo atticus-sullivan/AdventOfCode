@@ -88,8 +88,8 @@ FSdir parse(std::ifstream ifs)
 {
 	// use a reference_wrapper as references are not allowed in stl containers
 	std::vector<std::reference_wrapper<FSdir>> path{};
-	std::string l{};
-	std::string name{};
+	std::string                                l{};
+	std::string                                name{};
 
 	std::getline(ifs, l); // skip $ cd /
 	FSdir root{"/"};
@@ -107,7 +107,7 @@ FSdir parse(std::ifstream ifs)
 			else
 				// exception if node is not already known from ls
 				path.push_back(std::ref(dynamic_cast<FSdir &>(
-				    *path.back().get().children.at(l).get())));
+					*path.back().get().children.at(l).get())));
 			ifs >> l; // $
 		}
 		else if(l == "ls")
@@ -119,11 +119,11 @@ FSdir parse(std::ifstream ifs)
 				// std::cout << l << " " << name << std::endl;
 				if(l == "dir")
 					path.back().get().children.insert(
-					    {name, std::make_unique<FSdir>(FSdir{name})});
+						{name, std::make_unique<FSdir>(FSdir{name})});
 				else
 					path.back().get().children.insert(
-					    {name,
-					     std::make_unique<FSfile>(FSfile{name, std::stoi(l)})});
+						{name,
+						 std::make_unique<FSfile>(FSfile{name, std::stoi(l)})});
 				ifs >> l;
 			}
 		}
@@ -158,6 +158,6 @@ int main(int argc, char *argv[])
 	int part2 = partB(root);
 
 	std::cout << "Day 04:" << '\n'
-	          << "  Part 1: " << part1 << std::endl
-	          << "  Part 2: " << part2 << std::endl;
+			  << "  Part 1: " << part1 << std::endl
+			  << "  Part 2: " << part2 << std::endl;
 }
