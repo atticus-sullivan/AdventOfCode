@@ -11,14 +11,15 @@ struct Class {
 	int src, dst;
 
 	friend std::istream& operator>>(std::istream& is, Class& i) {
+		throw std::runtime_error("Parsing not implemented");
 		i = std::move(Class{}); // default initialize the most probable moved from object
 		return is;
 	}
 };
 
 int main(int argc, char* argv[]) {
-	// std::ifstream ifs{"../day00.dat.testing"};
-	std::ifstream ifs{"../day00.dat"};
+	// std::ifstream ifs{"../problems/day00.dat.testing"};
+	std::ifstream ifs{"../problems/day00.dat"};
 	if(ifs.fail()) throw std::runtime_error("File couldn't be opened!");
 
 	std::vector<Class> instructions = aocutils::vectorize_ifs<Class>(ifs);
