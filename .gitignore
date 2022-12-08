@@ -26,3 +26,4 @@ build
 .cache
 *xopp
 aoc_cli.bash
+.*
