@@ -1,7 +1,7 @@
+#include <algorithm>
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include <algorithm>
 #include <set>
 #include <vector>
 
@@ -9,7 +9,10 @@
 
 enum class Direction
 {
-	RIGHT, UP, DOWN, LEFT,
+	RIGHT,
+	UP,
+	DOWN,
+	LEFT,
 };
 std::ostream &operator<<(std::ostream &os, const Direction &i)
 {
@@ -28,7 +31,8 @@ std::ostream &operator<<(std::ostream &os, const Direction &i)
 		case DOWN:
 			os << "down";
 			break;
-		default: throw std::runtime_error("Invalid direction");
+		default:
+			throw std::runtime_error("Invalid direction");
 	}
 	return os;
 }
@@ -40,22 +44,32 @@ std::istream &operator>>(std::istream &is, Direction &i)
 	if(is.bad() || c == '\0') return is;
 	switch(c)
 	{
-		case 'R': i = RIGHT; break;
-		case 'U': i = UP; break;
-		case 'D': i = DOWN; break;
-		case 'L': i = LEFT; break;
-		default: throw std::runtime_error("Unable to parse invalid direction");
+		case 'R':
+			i = RIGHT;
+			break;
+		case 'U':
+			i = UP;
+			break;
+		case 'D':
+			i = DOWN;
+			break;
+		case 'L':
+			i = LEFT;
+			break;
+		default:
+			throw std::runtime_error("Unable to parse invalid direction");
 	}
 	return is;
 }
 
 struct Instruction
 {
-	int amount;
+	int       amount;
 	Direction dir;
 
 	template <std::size_t n_knots>
-	void exec(std::array<std::array<int,2>, n_knots> &knots, std::set<std::array<int,2>>& track) const
+	void exec(std::array<std::array<int, 2>, n_knots> &knots,
+			  std::set<std::array<int, 2>>            &track) const
 	{
 		using enum Direction;
 		for(int i{0}; i < amount; i++)
@@ -75,19 +89,30 @@ struct Instruction
 				case DOWN:
 					knots.front()[1]++;
 					break;
-				default: throw std::runtime_error("Invalid direction");
+				default:
+					throw std::runtime_error("Invalid direction");
 			}
 			// move all knots (except the first/head one)
-			for(auto last = knots.begin(), k = knots.begin()+1; k != knots.end(); last++, k++)
+			for(auto last = knots.begin(), k = knots.begin() + 1;
+				k != knots.end(); last++, k++)
 			{
 				if((*k)[0] == (*last)[0])
 				{
 					// same column
-					if(abs((*last)[1] - (*k)[1]) > 1) (*k)[1] += aocutils::sgn((*last)[1] - (*k)[1]);
-				} else if((*k)[1] == (*last)[1]) {
+					if(abs((*last)[1] - (*k)[1]) > 1)
+						(*k)[1] += aocutils::sgn((*last)[1] - (*k)[1]);
+				}
+				else if((*k)[1] == (*last)[1])
+				{
 					// same row
-					if(abs((*last)[0] - (*k)[0]) > 1) (*k)[0] += aocutils::sgn((*last)[0] - (*k)[0]);
-				} else if((abs((*last)[0] - (*k)[0]) >= 1 && abs((*last)[1] - (*k)[1]) > 1) || (abs((*last)[0] - (*k)[0]) > 1 && abs((*last)[1] - (*k)[1]) >= 1)){
+					if(abs((*last)[0] - (*k)[0]) > 1)
+						(*k)[0] += aocutils::sgn((*last)[0] - (*k)[0]);
+				}
+				else if((abs((*last)[0] - (*k)[0]) >= 1 &&
+						 abs((*last)[1] - (*k)[1]) > 1) ||
+						(abs((*last)[0] - (*k)[0]) > 1 &&
+						 abs((*last)[1] - (*k)[1]) >= 1))
+				{
 					// diagonal
 					(*k)[0] += aocutils::sgn((*last)[0] - (*k)[0]);
 					(*k)[1] += aocutils::sgn((*last)[1] - (*k)[1]);
@@ -113,14 +138,13 @@ struct Instruction
 };
 
 template <std::size_t n_knots>
-std::set<std::array<int,2>> partAll(std::vector<Instruction> instructions)
+std::set<std::array<int, 2>> partAll(std::vector<Instruction> instructions)
 {
-	std::array<std::array<int,2>, n_knots> knots{};
-	for(int i{0}; i < n_knots; i++)
-		knots[i] = {0,0};
-	std::set<std::array<int,2>> visited{knots.back()};
+	std::array<std::array<int, 2>, n_knots> knots{};
+	for(int i{0}; i < n_knots; i++) knots[i] = {0, 0};
+	std::set<std::array<int, 2>> visited{knots.back()};
 
-	for(const auto& instr : instructions)
+	for(const auto &instr : instructions)
 	{
 		instr.exec<n_knots>(knots, visited);
 
@@ -143,13 +167,13 @@ int main(int argc, char *argv[])
 	std::ifstream ifs{"../problems/day09.dat"};
 	if(ifs.fail()) throw std::runtime_error("File couldn't be opened!");
 
-	std::vector<Instruction> instructions = aocutils::vectorize_ifs<Instruction>(ifs);
+	std::vector<Instruction> instructions =
+		aocutils::vectorize_ifs<Instruction>(ifs);
 
 	auto part1 = partAll<2>(instructions).size();
 	auto part2 = partAll<10>(instructions).size();
 
 	std::cout << "Day 09:" << '\n'
 			  << "  Part 1: " << part1 << std::endl
-			  << "  Part 2: " << part2 << std::endl
-			  ;
+			  << "  Part 2: " << part2 << std::endl;
 }
