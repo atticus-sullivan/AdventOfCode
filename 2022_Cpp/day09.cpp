@@ -9,10 +9,7 @@
 
 enum class Direction
 {
-	RIGHT,
-	UP,
-	DOWN,
-	LEFT,
+	RIGHT, UP, DOWN, LEFT,
 };
 std::ostream &operator<<(std::ostream &os, const Direction &i)
 {
@@ -57,49 +54,54 @@ struct Instruction
 	int amount;
 	Direction dir;
 
-	std::tuple<std::array<int,2>,std::vector<std::array<int,2>>> exec(std::array<int,2> head, std::vector<std::array<int,2>> tail, std::set<std::array<int,2>>& track) const
+	template <std::size_t n_knots>
+	void exec(std::array<std::array<int,2>, n_knots> &knots, std::set<std::array<int,2>>& track) const
 	{
 		using enum Direction;
-		std::cout << dir << " " << amount << std::endl;
 		for(int i{0}; i < amount; i++)
 		{
+			// move head
 			switch(dir)
 			{
 				case RIGHT:
-					head[0]++;
+					knots.front()[0]++;
 					break;
 				case LEFT:
-					head[0]--;
+					knots.front()[0]--;
 					break;
 				case UP:
-					head[1]--;
+					knots.front()[1]--;
 					break;
 				case DOWN:
-					head[1]++;
+					knots.front()[1]++;
 					break;
 				default: throw std::runtime_error("Invalid direction");
 			}
-			std::array<int,2>* last = &head;
-			for(auto& t : tail){
-				if(t[0] == (*last)[0])
+			// move all knots (except the first/head one)
+			for(auto last = knots.begin(), k = knots.begin()+1; k != knots.end(); last++, k++)
+			{
+				if((*k)[0] == (*last)[0])
 				{
 					// same column
-					if(abs((*last)[1] - t[1]) > 1) t[1] += aocutils::sgn((*last)[1] - t[1]);
-				} else if(t[1] == (*last)[1]) {
+					if(abs((*last)[1] - (*k)[1]) > 1) (*k)[1] += aocutils::sgn((*last)[1] - (*k)[1]);
+				} else if((*k)[1] == (*last)[1]) {
 					// same row
-					if(abs((*last)[0] - t[0]) > 1) t[0] += aocutils::sgn((*last)[0] - t[0]);
-				} else if((abs((*last)[0] - t[0]) >= 1 && abs((*last)[1] - t[1]) > 1) || (abs((*last)[0] - t[0]) > 1 && abs((*last)[1] - t[1]) >= 1)){
+					if(abs((*last)[0] - (*k)[0]) > 1) (*k)[0] += aocutils::sgn((*last)[0] - (*k)[0]);
+				} else if((abs((*last)[0] - (*k)[0]) >= 1 && abs((*last)[1] - (*k)[1]) > 1) || (abs((*last)[0] - (*k)[0]) > 1 && abs((*last)[1] - (*k)[1]) >= 1)){
 					// diagonal
-					t[0] += aocutils::sgn((*last)[0] - t[0]);
-					t[1] += aocutils::sgn((*last)[1] - t[1]);
+					(*k)[0] += aocutils::sgn((*last)[0] - (*k)[0]);
+					(*k)[1] += aocutils::sgn((*last)[1] - (*k)[1]);
 				}
-				last = &t;
 			}
-			track.emplace(tail.back());
+			track.emplace(knots.back());
 		}
-		return std::make_tuple(head, tail);
 	}
 
+	friend std::ostream &operator<<(std::ostream &os, const Instruction &i)
+	{
+		os << i.dir << " " << i.amount;
+		return os;
+	}
 	friend std::istream &operator>>(std::istream &is, Instruction &i)
 	{
 		// default initialize the most probable moved from object
@@ -110,21 +112,23 @@ struct Instruction
 	}
 };
 
-std::set<std::array<int,2>> partA(std::vector<Instruction> instructions, int knots)
+template <std::size_t n_knots>
+std::set<std::array<int,2>> partAll(std::vector<Instruction> instructions)
 {
-	std::array<int,2> head{0,0};
-	std::vector<std::array<int,2>> tail(knots, {0,0});
-	std::set<std::array<int,2>> visited{tail.back()};
+	std::array<std::array<int,2>, n_knots> knots{};
+	for(int i{0}; i < n_knots; i++)
+		knots[i] = {0,0};
+	std::set<std::array<int,2>> visited{knots.back()};
 
 	for(const auto& instr : instructions)
 	{
-		std::tie(head,tail) = instr.exec(head,tail, visited);
+		instr.exec<n_knots>(knots, visited);
 
-		// print positions only for debuggin
-		// std::cout << "Head at: " << head[0] << "|" << head[1] << std::endl;
-		// for(const auto& t : tail)
+		// // print positions only for debugging
+		// std::cout << instr << std::endl;
+		// for(const auto& k : knots)
 		// {
-		// 	std::cout << "x at: " << t[0] << "|" << t[1] << " ";
+		// 	std::cout << "x at: " << k[0] << "|" << k[1] << " ";
 		// }
 		// std::cout << "\n" << std::endl;
 	}
@@ -141,8 +145,8 @@ int main(int argc, char *argv[])
 
 	std::vector<Instruction> instructions = aocutils::vectorize_ifs<Instruction>(ifs);
 
-	auto part1 = partA(instructions, 1).size();
-	auto part2 = partA(instructions, 9).size();
+	auto part1 = partAll<2>(instructions).size();
+	auto part2 = partAll<10>(instructions).size();
 
 	std::cout << "Day 09:" << '\n'
 			  << "  Part 1: " << part1 << std::endl
