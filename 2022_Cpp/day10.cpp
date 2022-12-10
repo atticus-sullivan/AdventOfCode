@@ -17,7 +17,7 @@ enum class Instr_Type
 struct Instruction
 {
 	Instr_Type type;
-	std::optional<signed int> x;
+	signed int x;
 
 	friend std::istream &operator>>(std::istream &is, Instruction &i)
 	{
@@ -29,13 +29,13 @@ struct Instruction
 		if (instr == "addx")
 		{
 			i.type = ADD;
-			signed int tmp{};
-			is >> tmp;
-			i.x.emplace(tmp);
+			is >> i.x;
 		} else if (instr == "noop")
 		{
 			i.type = NOOP;
-			i.x.reset();
+			// just handle noop like add with x=0 in respect of modifying the
+			// register
+			i.x = 0;
 		} else throw std::runtime_error("Invalid instruction");
 
 		return is;
@@ -71,7 +71,7 @@ int main()
 			if(cycle % 40 == 0) part2_ << "\n";
 			cycle++;
 		}
-		if(i.type == ADD) reg += *i.x;
+		reg += i.x;
 	}
 
 	auto part2 = part2_.str();
