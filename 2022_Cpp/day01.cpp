@@ -32,7 +32,7 @@ struct Elf
 	}
 };
 
-int main(int argc, char *argv[])
+int main()
 {
 	// std::ifstream ifs{"../problems/day01.dat.testing"};
 	std::ifstream ifs{"../problems/day01.dat"};

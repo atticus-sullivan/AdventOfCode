@@ -47,7 +47,7 @@ struct Rucksack
 	}
 };
 
-int main(int argc, char *argv[])
+int main()
 {
 	// std::ifstream ifs{"../problems/day04.dat.testing"};
 	std::ifstream ifs{"../problems/day04.dat"};

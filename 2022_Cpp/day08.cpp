@@ -17,10 +17,10 @@ struct Field
 
 	void set_scenic_score(int x, int y)
 	{
-		int current{vec.at(y * dim + x)};
+		int current{vec.at(static_cast<unsigned>(y * dim + x))};
 		int score{1}; // neutral element of multiplication
 		// go in each direction once (not diagonal)
-		for(const auto [i, j] :
+		for(const auto &[i, j] :
 			{std::make_tuple(1, 0), std::make_tuple(0, 1),
 			 std::make_tuple(-1, 0), std::make_tuple(0, -1)})
 		{
@@ -33,7 +33,7 @@ struct Field
 				cnt++;
 				// stop if tree is too high => everything beind is not visible
 				// anymore
-				if(vec.at(l * dim + k) >= current) break;
+				if(vec.at(static_cast<unsigned>(l * dim + k)) >= current) break;
 				k += i;
 				l += j;
 			}
@@ -41,7 +41,7 @@ struct Field
 			// 0*x will always stay 0
 			if(score == 0) break;
 		}
-		scores.at(y * dim + x) = score;
+		scores.at(static_cast<unsigned>(y * dim + x)) = score;
 	}
 
 	friend std::istream &operator>>(std::istream &is, Field &i)
@@ -50,19 +50,19 @@ struct Field
 		std::getline(is, l);
 
 		// init vector-sizes of i (avoid reallocation)
-		i.dim    = l.length();
-		i.vec    = std::vector<int>(i.dim * i.dim);
-		i.vis    = std::vector<bool>(i.dim * i.dim);
-		i.scores = std::vector<int>(i.dim * i.dim);
+		i.dim    = static_cast<int>(l.length());
+		i.vec    = std::vector<int>(static_cast<unsigned>(i.dim * i.dim));
+		i.vis    = std::vector<bool>(static_cast<unsigned>(i.dim * i.dim));
+		i.scores = std::vector<int>(static_cast<unsigned>(i.dim * i.dim));
 		int idx{0};
 
 		// populate with already read line (needed to determine the dimension of
 		// the input)
 		for(const char c : l)
 		{
-			i.vis.at(idx)    = false;
-			i.scores.at(idx) = 0;
-			i.vec.at(idx)    = c - '0';
+			i.vis.at(static_cast<unsigned>(idx))    = false;
+			i.scores.at(static_cast<unsigned>(idx)) = 0;
+			i.vec.at(static_cast<unsigned>(idx))    = c - '0';
 			idx++;
 		}
 
@@ -71,9 +71,9 @@ struct Field
 		is >> c;
 		for(; is.good(); is >> c)
 		{
-			i.vis.at(idx)    = false;
-			i.scores.at(idx) = 0;
-			i.vec.at(idx)    = c - '0';
+			i.vis.at(static_cast<unsigned>(idx))    = false;
+			i.scores.at(static_cast<unsigned>(idx)) = 0;
+			i.vec.at(static_cast<unsigned>(idx))    = c - '0';
 			idx++;
 		}
 
@@ -94,10 +94,10 @@ struct Field
 				int max{-1};
 				while(0 <= x && x < i.dim)
 				{
-					if(max < i.vec.at(y * i.dim + x))
+					if(max < i.vec.at(static_cast<unsigned>(y * i.dim + x)))
 					{
-						i.vis.at(y * i.dim + x) = true;
-						max                     = i.vec.at(y * i.dim + x);
+						i.vis.at(static_cast<unsigned>(y * i.dim + x)) = true;
+						max = i.vec.at(static_cast<unsigned>(y * i.dim + x));
 					}
 					x += k;
 				}
@@ -115,10 +115,10 @@ struct Field
 				int max{-1};
 				while(0 <= y && y < i.dim)
 				{
-					if(max < i.vec.at(y * i.dim + x))
+					if(max < i.vec.at(static_cast<unsigned>(y * i.dim + x)))
 					{
-						i.vis.at(y * i.dim + x) = true;
-						max                     = i.vec.at(y * i.dim + x);
+						i.vis.at(static_cast<unsigned>(y * i.dim + x)) = true;
+						max = i.vec.at(static_cast<unsigned>(y * i.dim + x));
 					}
 					y += l;
 				}
@@ -129,7 +129,7 @@ struct Field
 	}
 };
 
-int main(int argc, char *argv[])
+int main()
 {
 	// std::ifstream ifs{"../problems/day08.dat.testing"};
 	std::ifstream ifs{"../problems/day08.dat"};

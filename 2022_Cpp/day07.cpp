@@ -23,7 +23,7 @@ struct FSele
 struct FSfile : FSele
 {
 	int size;
-	FSfile(std::string name, int size) : size{size}, FSele(name) {}
+	FSfile(std::string name, int size) : FSele(name), size{size} {}
 
 	int  get_size() const override { return size; }
 	bool is_dir() const override { return false; }
@@ -39,7 +39,7 @@ struct FSfile : FSele
 struct FSdir : FSele
 {
 	std::map<std::string, std::unique_ptr<FSele>> children;
-	FSdir(std::string name) : children{}, FSele(name) {}
+	FSdir(std::string name) : FSele(name), children{} {}
 
 	bool is_dir() const override { return true; }
 
@@ -144,7 +144,7 @@ int partB(const FSdir &root)
 	return root.bigger_than(need_to_free, std::numeric_limits<int>::max());
 }
 
-int main(int argc, char *argv[])
+int main()
 {
 	// std::ifstream ifs{"../problems/day07.dat.testing"};
 	std::ifstream ifs{"../problems/day07.dat"};

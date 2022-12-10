@@ -64,7 +64,7 @@ std::istream &operator>>(std::istream &is, Direction &i)
 
 struct Instruction
 {
-	int       amount;
+	unsigned int amount;
 	Direction dir;
 
 	template <std::size_t n_knots>
@@ -72,7 +72,7 @@ struct Instruction
 			  std::set<std::array<int, 2>>            &track) const
 	{
 		using enum Direction;
-		for(int i{0}; i < amount; i++)
+		for(unsigned int i{0}; i < amount; i++)
 		{
 			// move head
 			switch(dir)
@@ -141,7 +141,7 @@ template <std::size_t n_knots>
 std::set<std::array<int, 2>> partAll(std::vector<Instruction> instructions)
 {
 	std::array<std::array<int, 2>, n_knots> knots{};
-	for(int i{0}; i < n_knots; i++) knots[i] = {0, 0};
+	for(unsigned int i{0}; i < n_knots; i++) knots[i] = {0, 0};
 	std::set<std::array<int, 2>> visited{knots.back()};
 
 	for(const auto &instr : instructions)
@@ -160,7 +160,7 @@ std::set<std::array<int, 2>> partAll(std::vector<Instruction> instructions)
 	return visited;
 }
 
-int main(int argc, char *argv[])
+int main()
 {
 	// std::ifstream ifs{"../problems/day09.dat.testing"};
 	// std::ifstream ifs{"../problems/day09.dat.testing2"};

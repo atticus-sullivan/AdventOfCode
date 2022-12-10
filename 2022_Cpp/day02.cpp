@@ -90,9 +90,9 @@ struct Rucksack
 
 	int calc_points(Play opponent, Play own)
 	{
-		bool win = own == Play::ROCK && opponent == Play::SCISSORS ||
-				   own == Play::PAPER && opponent == Play::ROCK ||
-				   own == Play::SCISSORS && opponent == Play::PAPER;
+		bool win = (own == Play::ROCK && opponent == Play::SCISSORS) ||
+				   (own == Play::PAPER && opponent == Play::ROCK) ||
+				   (own == Play::SCISSORS && opponent == Play::PAPER);
 		if(win) return static_cast<int>(Outcome::WIN) + static_cast<int>(own);
 		if(opponent == own)
 			return static_cast<int>(Outcome::DRAW) + static_cast<int>(own);
@@ -134,7 +134,7 @@ struct Rucksack
 	}
 };
 
-int main(int argc, char *argv[])
+int main()
 {
 	// std::ifstream ifs{"../problems/day02.dat.testing"};
 	std::ifstream ifs{"../problems/day02.dat"};

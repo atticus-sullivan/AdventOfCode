@@ -13,7 +13,7 @@
 struct Instruction
 {
 	int amount;
-	int src, dst;
+	unsigned int src, dst;
 
 	friend std::istream &operator>>(std::istream &is, Instruction &i)
 	{
@@ -32,7 +32,7 @@ struct Instruction
 
 struct Crates
 {
-	std::map<int, std::deque<char>> stacks;
+	std::map<unsigned int, std::deque<char>> stacks;
 
 	void apply(const Instruction &ins, bool part2 = false)
 	{
@@ -83,7 +83,7 @@ struct Crates
 		bool first = true;
 		while(l != "")
 		{
-			for(int j = 1; true; j++)
+			for(unsigned int j = 1; true; j++)
 			{
 				if(l.length() <= 4 * (j - 1) + 1) break;
 				if(first) { i.stacks.insert({j, {}}); }
@@ -97,7 +97,7 @@ struct Crates
 				}
 				if('0' <= c && c <= '9')
 				{
-					int k = c - '0';
+					unsigned int k = static_cast<unsigned char>(c) - '0';
 					assert(k == j && "Index not matching the footer");
 					continue;
 				}
@@ -110,7 +110,7 @@ struct Crates
 	}
 };
 
-int main(int argc, char *argv[])
+int main()
 {
 	// std::ifstream ifs{"../problems/day05.dat.testing"};
 	std::ifstream ifs{"../problems/day05.dat"};

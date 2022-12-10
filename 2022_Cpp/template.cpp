@@ -14,13 +14,18 @@ struct Class
 	friend std::istream &operator>>(std::istream &is, Class &i)
 	{
 		throw std::runtime_error("Parsing not implemented");
-		i = std::move(
-			Class{}); // default initialize the most probable moved from object
+		// default initialize the most probable moved from object
+		i = std::move( Class{});
 		return is;
+	}
+	friend std::ostream &operator<<(std::ostream &os, Class &i)
+	{
+		throw std::runtime_error("Printing not implemented");
+		return os;
 	}
 };
 
-int main(int argc, char *argv[])
+int main()
 {
 	// std::ifstream ifs{"../problems/day00.dat.testing"};
 	std::ifstream ifs{"../problems/day00.dat"};
@@ -28,10 +33,10 @@ int main(int argc, char *argv[])
 
 	std::vector<Class> instructions = aocutils::vectorize_ifs<Class>(ifs);
 
-	std::string part1 = "dummy";
-	std::string part2 = "dummy";
+	auto part1 = "dummy";
+	auto part2 = "dummy";
 
-	std::cout << "Day 04:" << '\n'
+	std::cout << "Day 00:" << '\n'
 			  << "  Part 1: " << part1 << std::endl
 			  << "  Part 2: " << part2 << std::endl
 			  ;

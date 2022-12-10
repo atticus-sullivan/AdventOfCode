@@ -12,21 +12,21 @@ struct Message
 {
 	std::string msg;
 
-	int search_start(int count)
+	int search_start(unsigned int count)
 	{
 		auto left{msg.begin()};
 		auto right{msg.begin()};
 		// storee how often which element occurs
 		std::map<char, int> eleMap{};
 
-		int j{0}; // how many characters are being read so far
+		unsigned int j{0}; // how many characters are being read so far
 		// initialize with the first count characters
 		for(; j < count; j++, right++) { eleMap[*right]++; }
 		// shift window one char to the right each time
 		for(; right != msg.end(); right++, left++, j++)
 		{
 			// count distict elements contained in Map
-			if(eleMap.size() == count) return j;
+			if(eleMap.size() == count) return static_cast<int>(j);
 			// left char occurs one time less in range, check if it is to be
 			// removed
 			if(--eleMap[*left] == 0) eleMap.erase(*left);
@@ -38,15 +38,15 @@ struct Message
 
 	friend std::istream &operator>>(std::istream &is, Message &i)
 	{
-		i = std::move(Message{}); // default initialize the most probable moved
-								  // from object
+		// default initialize the most probable moved from object
+		i = std::move(Message{});
 
 		std::getline(is, i.msg);
 		return is;
 	}
 };
 
-int main(int argc, char *argv[])
+int main()
 {
 	// std::ifstream ifs{"../problems/day06.dat.testing"};
 	std::ifstream ifs{"../problems/day06.dat"};
