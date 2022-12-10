@@ -42,66 +42,39 @@ struct Instruction
 	}
 };
 
-int partA(std::vector<Instruction> instructions)
-{
-	int reg{1};
-	int part1{0};
-	int cycle{1};
-	for(const auto& i : instructions)
-	{
-		// std::cout << static_cast<int>(i.type) << " " << i.x.value_or(0) << std::endl;
-		for(int k{0}; k < static_cast<int>(i.type); k++)
-		{
-			// std::cout << reg << " " << cycle << " " << (reg * cycle) << std::endl;
-			if((cycle-20) % 40 == 0)
-			{
-				// std::cout << reg << " " << cycle << " " << (reg * cycle) << std::endl;
-				part1+= (reg * cycle);
-			}
-			cycle++;
-		}
-		using enum Instr_Type;
-		if(i.type == ADD) reg += *i.x;
-	}
-	return part1;
-}
-
-std::string partB(std::vector<Instruction> instructions)
-{
-	int reg{1};
-	std::ostringstream part1{};
-	part1 << "\n";
-	int cycle{0};
-	for(const auto& i : instructions)
-	{
-		for(int k{0}; k < static_cast<int>(i.type); k++)
-		{
-			// std::cout << cycle << " " << reg << std::endl;
-			if(abs(reg - (cycle%40)) <= 1)
-				part1 << "#";
-			else
-				part1 << ".";
-			if((cycle+1) % 40 == 0) part1 << "\n";
-			cycle++;
-		}
-		using enum Instr_Type;
-		if(i.type == ADD) reg += *i.x;
-	}
-	return part1.str();
-}
-
 int main()
 {
+	using enum Instr_Type;
 	// std::ifstream ifs{"../problems/day10.dat.testing"};
 	// std::ifstream ifs{"../problems/day10.dat.testing2"};
 	std::ifstream ifs{"../problems/day10.dat"};
 	if(ifs.fail()) throw std::runtime_error("File couldn't be opened!");
 
-	std::vector<Instruction> instructions = aocutils::vectorize_ifs<Instruction>(ifs);
+	// only read input once and simply use an iterator for the loop (no storing
+	// in a vector)
+	auto instructions = std::views::istream<Instruction>(ifs);
 
+	int                reg{1};
+	int                cycle{1};
+	std::ostringstream part2_{};
+	part2_ << "\n";
+	int part1{0};
+	for(const auto &i : instructions)
+	{
+		for(int k{0}; k < static_cast<int>(i.type); k++)
+		{
+			// part1
+			if((cycle - 20) % 40 == 0) { part1 += (reg * cycle); }
+			// part2
+			if(abs(reg - ((cycle - 1) % 40)) <= 1) part2_ << "#";
+			else part2_ << ".";
+			if(cycle % 40 == 0) part2_ << "\n";
+			cycle++;
+		}
+		if(i.type == ADD) reg += *i.x;
+	}
 
-	auto part1 = partA(instructions);
-	auto part2 = partB(instructions);
+	auto part2 = part2_.str();
 
 	std::cout << "Day 10:" << '\n'
 			  << "  Part 1: " << part1 << std::endl
