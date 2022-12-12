@@ -200,7 +200,7 @@ int main()
 	if(ifs.fail()) throw std::runtime_error("File couldn't be opened!");
 
 	std::vector<Monkey> monkeys = aocutils::vectorize_ifs<Monkey>(ifs);
-	std::cout << monkeys.size() << std::endl;
+	// std::cout << monkeys.size() << std::endl;
 	// should be able to parallelize this somehow
 	long lcm_div_able = std::accumulate(monkeys.begin(), monkeys.end(), 1,
 										[](const int a, const Monkey b)
