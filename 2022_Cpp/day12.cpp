@@ -5,52 +5,16 @@
 #include <ranges>
 #include <vector>
 #include <functional>
+#include <limits>
 
 #include "aocutils.h"
-
-// assumes that distance is alrwady initialized with infinity
-template <typename T>
-void dijkstra(
-		std::function<void(T,int)> set_distance, std::function<int(T)> get_distance,
-		std::function<void(T, bool)> set_visited, std::function<bool(T)> get_visited,
-		std::function<std::vector<std::pair<T,int>>(T)> neighbours,
-		std::function<void(T,T)> set_parent,
-		T start)
-{
-	auto comp = [](const std::pair<int,T>& a, const std::pair<int,T>& b){return a.first > b.first;};
-	std::priority_queue<std::pair<int, T>, std::vector<std::pair<int, T>>, decltype(comp)> pq{};
-	pq.emplace(0,start);
-	while(pq.size() > 0)
-	{
-		auto [_,v] = pq.top();
-		pq.pop();
-		// check if v is already processed (because of ust inserting new values
-		// to the pq instead of dooing an uüdate)
-		// std::cout << "Selected " << v << std::endl;
-		if(get_visited(v)) continue;
-		set_visited(v, true);
-
-		for(auto& [w,c] : neighbours(v))
-		{
-			// std::cout << "w = " << w << std::endl;
-			int dist = get_distance(v) + c;
-			if(dist < get_distance(w))
-			{
-				set_parent(w, v);
-				pq.push(std::make_pair(dist,w));
-				set_distance(w, dist);
-			}
-		}
-		// std::cout << "Finished " << v << std::endl;
-	}
-}
 
 struct Field
 {
 	std::vector<int> f;
 	unsigned int src;
 	unsigned int dst;
-	unsigned long dim;
+	unsigned int dim;
 
 	friend std::istream &operator>>(std::istream &is, Field &i)
 	{
@@ -67,8 +31,8 @@ struct Field
 			if(x != '\n')
 			{
 				if(first) i.dim++;
-				if(x == 'S')      { i.src = i.f.size(); x = 'a'; }
-				else if(x == 'E') { i.dst = i.f.size(); x = 'z'; }
+				if(x == 'S')      { i.src = static_cast<unsigned int>(i.f.size()); x = 'a'; }
+				else if(x == 'E') { i.dst = static_cast<unsigned int>(i.f.size()); x = 'z'; }
 				i.f.push_back(x - 'a');
 			}
 			else
@@ -85,42 +49,41 @@ struct Field
 	// }
 };
 
+using idx_t = unsigned int; // = eles of dijkstra
 int partA(Field& field)
 {
-	std::vector<int> distances(field.f.size(), 10000);
-	distances.at(field.src) = 0;
-	auto set_distance = [&distances](unsigned int idx,int dist) { distances.at(idx) = dist; };
-	auto get_distance = [&distances](unsigned int idx) { return distances.at(idx); };
+	std::vector<int> distances(field.f.size(), std::numeric_limits<int>::max()); // default to inf
+	auto set_distance = [&distances](idx_t& idx, int dist) { distances.at(idx) = dist; };
+	auto get_distance = [&distances](const idx_t& idx) { return distances.at(idx); };
 
-	std::vector<bool> visited(field.f.size(), false);
-	auto set_visited = [&visited](unsigned int idx,int dist) { visited.at(idx) = dist; };
-	auto get_visited = [&visited](unsigned int idx) { return visited.at(idx); };
+	std::vector<bool> visited(field.f.size(), false); // default to false
+	auto set_visited = [&visited](idx_t& idx, bool vis) { visited.at(idx) = vis; };
+	auto get_visited = [&visited](const idx_t& idx) { return visited.at(idx); };
 
-	auto neighbours = [&field](int idx)
+	auto neighbours = [&field](const idx_t& idx)
 	{
-		std::vector<std::pair<unsigned long, int>> ret{};
+		std::vector<std::pair<idx_t, int>> ret{}; // idx and weight // TODO use reference here as well
 		int cur = field.f.at(idx);
 
-		for(const auto ele : std::array{idx-1, idx+1, idx+static_cast<int>(field.dim), idx-static_cast<int>(field.dim)})
+		for(const auto ele : std::array<signed long,4>{idx-1, idx+1, idx+field.dim, idx-field.dim})
 		{
 			if(ele < 0 || ele >= static_cast<long>(field.f.size())) continue;
-			if(field.f.at(ele) <= cur || field.f.at(ele) == cur+1)
+			if(field.f.at(static_cast<unsigned>(ele)) <= cur || field.f.at(static_cast<unsigned>(ele)) == cur+1)
 			{
 				ret.emplace_back(ele, 1);
 			}
 		}
-
 		return ret;
-	};
+	}; // end neighbours
 
-	dijkstra<unsigned long>(set_distance, get_distance, set_visited, get_visited, neighbours, [](int,int){;}, field.src);
+	aocutils::dijkstra<idx_t>(set_distance, get_distance, set_visited, get_visited, [](idx_t,idx_t){;}, neighbours, field.src);
 
 	return get_distance(field.dst);
 }
 
 int partB(Field& field)
 {
-	int min = 10000;
+	int min = std::numeric_limits<int>::max();
 	for(unsigned int i{0}; i < field.f.size(); i++)
 	{
 		if(field.f.at(i) != 0) continue;

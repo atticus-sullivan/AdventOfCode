@@ -3,6 +3,8 @@
 #include <concepts>
 #include <cassert>
 #include <algorithm>
+#include <queue>
+#include <functional>
 
 #pragma once
 
@@ -44,6 +46,48 @@ template<class T>
 
 template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
+}
+
+// leave it up to the user which data-structures are being used for storing
+// visited, distance and parent (might be an external vector/map or stored just
+// as a member of T)
+template <typename T>
+void dijkstra(
+		// distance should be inf for all
+		std::function<void(T&, int)> set_distance, std::function<int(const T&)> get_distance,
+		// visited should be false for all
+		std::function<void(T&, bool)> set_visited, std::function<bool(const T&)> get_visited,
+		std::function<void(T&, const T&)> set_parent,
+		// TODO return T as reference. Problem: 2022day12 T is just an index to an array => no long-live object to refer to
+		std::function<std::vector<std::pair<T,int>>(const T&)> neighbours,
+		T& start
+		)
+{
+	auto comp = [](const std::pair<int,T>& a, const std::pair<int,T>& b){return a.first > b.first;};
+	std::priority_queue<std::pair<int, T>, std::vector<std::pair<int, T>>, decltype(comp)> pq{};
+	pq.emplace(0,start);
+
+	set_distance(start, 0);
+	while(pq.size() > 0)
+	{
+		auto [_,v] = pq.top();
+		pq.pop();
+		// check if v is already processed (because of ust inserting new values
+		// to the pq instead of dooing an uüdate)
+		if(get_visited(v)) continue;
+		set_visited(v, true);
+
+		for(auto& [w,c] : neighbours(v))
+		{
+			int dist = get_distance(v) + c;
+			if(dist < get_distance(w))
+			{
+				set_parent(w, v);
+				pq.push(std::make_pair(dist,w));
+				set_distance(w, dist);
+			}
+		}
+	}
 }
 
 } // Namespace aocutils
