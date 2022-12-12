@@ -13,7 +13,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # display many warnings during compilation
 # they usually help you find some bugs
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-    add_compile_options(-Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
+    add_compile_options(-Wall -Wextra -Wconversion -pedantic -Wfatal-errors -g)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     add_compile_options(/W3 /WX)
 
@@ -33,3 +33,4 @@ add_executable(day08 day08.cpp)
 add_executable(day09 day09.cpp)
 add_executable(day10 day10.cpp)
 add_executable(day11 day11.cpp)
+add_executable(day12 day12.cpp)
