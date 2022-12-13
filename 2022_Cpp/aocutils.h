@@ -129,10 +129,4 @@ std::optional<std::reference_wrapper<T>> breath_first_search(
 	return {};
 }
 
-// works in directed, acyclic, weighted graph
-void topologic_sort()
-{
-	// TODO
-}
-
 } // Namespace aocutils
