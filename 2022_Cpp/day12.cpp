@@ -52,30 +52,49 @@ struct Field
 };
 
 using idx_t = unsigned int; // = eles for dijkstra
-int partA(Field &field)
+int part(Field &field, std::function<std::vector<std::pair<idx_t,int>>(const idx_t&)> neighbours, std::function<bool(const idx_t&)> pred, idx_t& start)
 {
-	std::vector<int> distances(
-		field.f.size(), std::numeric_limits<int>::max()); // default to inf
-	auto set_distance = [&distances](idx_t &idx, int dist)
-	{ distances.at(idx) = dist; };
-	auto get_distance = [&distances](const idx_t &idx)
-	{ return distances.at(idx); };
+	std::vector<idx_t> parents(
+		field.f.size(), std::numeric_limits<int>::max()); // default to inf -> invalid value
+	auto set_parent = [&parents](idx_t &idx, const idx_t &parent)
+	{ parents.at(idx) = parent; };
 
 	std::vector<bool> visited(field.f.size(), false); // default to false
 	auto              set_visited = [&visited](idx_t &idx, bool vis)
 	{ visited.at(idx) = vis; };
 	auto get_visited = [&visited](const idx_t &idx) { return visited.at(idx); };
 
+	auto dst = aocutils::breath_first_search<idx_t>(
+		set_visited, get_visited,
+		set_parent, neighbours,
+		pred,
+		start);
+
+	int length{0};
+
+	if(!dst.has_value()) return std::numeric_limits<int>::max();
+	for(idx_t cur{*dst}; cur != start;)
+	{
+		length++;
+		cur = parents.at(cur);
+		if(cur >= parents.size()) return std::numeric_limits<int>::max();
+	}
+
+	return length;
+}
+int partA(Field &field)
+{
 	auto neighbours = [&field](const idx_t &idx)
 	{
 		std::vector<std::pair<idx_t, int>>
 			ret{}; // idx and weight
 		int cur = field.f.at(idx);
 
-		for(const auto ele : std::array<signed long, 4>{
+		for(const auto ele : std::array{
 				idx - 1, idx + 1, idx + field.dim, idx - field.dim})
 		{
-			if(ele < 0 || ele >= static_cast<long>(field.f.size())) continue;
+			if(ele >= field.f.size()) continue;
+			// std::cout << "neigh: " << ele << std::endl;
 			if(field.f.at(static_cast<unsigned>(ele)) <= cur ||
 			   field.f.at(static_cast<unsigned>(ele)) == cur + 1)
 			{
@@ -85,23 +104,40 @@ int partA(Field &field)
 		return ret;
 	}; // end neighbours
 
-	aocutils::dijkstra<idx_t>(
-		set_distance, get_distance, set_visited, get_visited,
-		[](idx_t, idx_t) { ; }, neighbours, field.src);
+	auto pred = [&field](const idx_t v){return v == field.dst;};
 
-	return get_distance(field.dst);
+
+	return part(field, neighbours, pred, field.src);
 }
 
 int partB(Field &field)
 {
-	int min = std::numeric_limits<int>::max();
-	for(unsigned int i{0}; i < field.f.size(); i++)
+	auto neighbours = [&field](const idx_t &idx)
 	{
-		if(field.f.at(i) != 0) continue;
-		field.src = i;
-		min       = std::min(min, partA(field));
-	}
-	return min;
+		std::vector<std::pair<idx_t, int>>
+			ret{}; // idx and weight
+		int cur = field.f.at(idx);
+
+		for(const auto ele : std::array{
+				idx - 1, idx + 1, idx + field.dim, idx - field.dim})
+		{
+			if(ele >= field.f.size()) continue;
+			// std::cout << "neigh: " << ele << std::endl;
+			if(field.f.at(static_cast<unsigned>(ele)) >= cur ||
+			   field.f.at(static_cast<unsigned>(ele)) == cur - 1)
+			{
+				ret.emplace_back(ele, 1);
+			}
+		}
+		return ret;
+	}; // end neighbours
+
+	auto pred = [&field](const idx_t v){return field.f.at(v) == field.f.at(field.src);};
+
+	// do the BFS just as in partA but with stuff reversed
+	// works since BFS always finds the nearest node according to `pred` (at
+	// least in an unweighted graph)
+	return part(field, neighbours, pred, field.dst);
 }
 
 int main()
@@ -118,5 +154,6 @@ int main()
 
 	std::cout << "Day 12:" << '\n'
 			  << "  Part 1: " << part1 << std::endl
-			  << "  Part 2: " << part2 << std::endl;
+			  << "  Part 2: " << part2 << std::endl
+			  ;
 }

@@ -48,9 +48,17 @@ template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
+///////////
+// GRAPHS //
+///////////
+// TODO make it work without copying -> just references in Neighbours -> just
+// doesn't work if T is just indices...
+
 // leave it up to the user which data-structures are being used for storing
 // visited, distance and parent (might be an external vector/map or stored just
 // as a member of T)
+//
+// works in directed, weighted (>=0) graph
 template <typename T>
 void dijkstra(
 		// distance should be inf for all
@@ -88,6 +96,43 @@ void dijkstra(
 			}
 		}
 	}
+}
+
+// works in directed, acyclic, unweighted graph
+template <typename T>
+std::optional<std::reference_wrapper<T>> breath_first_search(
+		std::function<void(T&, bool)> set_visited, std::function<bool(const T&)> get_visited,
+				std::function<void(T&, const T&)> set_parent,
+				std::function<std::vector<std::pair<T,int>>(const T&)> neighbours,
+				std::function<bool(const T&)> pred,
+				T& start)
+{
+	std::queue<T> q{};
+	q.push(start);
+	while(!q.empty())
+	{
+		T &v = q.front();
+		q.pop();
+		if(pred(v)) return {v};
+
+		for(auto [w,c] : neighbours(v))
+		{
+			assert(c == 1 && "Graph must be unweighted");
+			if(!get_visited(w))
+			{
+				set_visited(w, true);
+				set_parent(w, v);
+				q.push(w);
+			}
+		}
+	}
+	return {};
+}
+
+// works in directed, acyclic, weighted graph
+void topologic_sort()
+{
+	// TODO
 }
 
 } // Namespace aocutils
