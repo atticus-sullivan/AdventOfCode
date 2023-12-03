@@ -6,41 +6,6 @@
 
 #include "aocutils.h"
 
-template <typename Container, typename Iterator>
-	requires std::forward_iterator<Iterator>
-Iterator do_advance(Container &container, Iterator it,
-					typename Iterator::difference_type n)
-{
-	while(n > 0)
-	{
-		--n;
-		++it;
-		if(it == container.end()) it = container.begin();
-	}
-	return it;
-}
-
-template <typename Container, typename Iterator>
-	requires std::bidirectional_iterator<Iterator>
-Iterator do_advance(Container &container, Iterator it,
-					typename Iterator::difference_type n)
-{
-	// std::cout << "adv " << n << std::endl;
-	while(n > 0)
-	{
-		--n;
-		++it;
-		if(it == container.end()) it = container.begin();
-	}
-	while(n < 0)
-	{
-		if(it == container.begin()) it = container.end();
-		++n;
-		--it;
-	}
-	return it;
-}
-
 long solve_part1(std::vector<long> &v_lon, long key, int rounds)
 {
 	std::list<long> lon{v_lon.begin(), v_lon.end()};
@@ -69,15 +34,15 @@ long solve_part1(std::vector<long> &v_lon, long key, int rounds)
 
 			adv = adv < 0 ? adv : adv + 1;
 
-			lon.splice(do_advance(lon, i, adv), lon, i, std::next(i, 1));
+			lon.splice(aocutils::advance_circle(lon, i, adv), lon, i, std::next(i, 1));
 		}
 	}
 
 	auto zero =
 		std::find_if(lon.begin(), lon.end(), [](auto &i) { return i == 0; });
-	auto one   = do_advance(lon, zero, 1000 % lon.size());
-	auto two   = do_advance(lon, zero, 2000 % lon.size());
-	auto three = do_advance(lon, zero, 3000 % lon.size());
+	auto one   = aocutils::advance_circle(lon, zero, 1000 % lon.size());
+	auto two   = aocutils::advance_circle(lon, zero, 2000 % lon.size());
+	auto three = aocutils::advance_circle(lon, zero, 3000 % lon.size());
 
 	// std::cout
 	// 	<< one->get().num << " | "

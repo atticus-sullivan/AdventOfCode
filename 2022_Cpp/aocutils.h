@@ -147,5 +147,40 @@ bool is_disjoint(const std::set<T1> &a, const std::set<T2> &b)
 	return true;
 }
 
+template <typename Container, typename Iterator>
+	requires std::forward_iterator<Iterator>
+Iterator advance_circle(Container &container, Iterator it,
+					typename Iterator::difference_type n)
+{
+	while(n > 0)
+	{
+		--n;
+		++it;
+		if(it == container.end()) it = container.begin();
+	}
+	return it;
+}
+
+template <typename Container, typename Iterator>
+	requires std::bidirectional_iterator<Iterator>
+Iterator advance_circle(Container &container, Iterator it,
+					typename Iterator::difference_type n)
+{
+	// std::cout << "adv " << n << std::endl;
+	while(n > 0)
+	{
+		--n;
+		++it;
+		if(it == container.end()) it = container.begin();
+	}
+	while(n < 0)
+	{
+		if(it == container.begin()) it = container.end();
+		++n;
+		--it;
+	}
+	return it;
+}
+
 
 } // Namespace aocutils
