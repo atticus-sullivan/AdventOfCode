@@ -33,23 +33,23 @@ fn main() -> Result<()> {
             x.parse()?;
             match args.part {
                 Some(1) => {
-                    x.solve_part1()?;
+                    println!("Day {:02} Part 1: {}", d, x.solve_part1()?);
                 },
                 Some(2) => {
-                    x.solve_part2()?;
+                    println!("Day {:02} Part 2: {}", d, x.solve_part2()?);
                 },
                 Some(_) => {
                     return Err(anyhow!("invalid part provided"));
                 }
                 None => {
-                    x.solve_part1()?;
-                    x.solve_part2()?;
+                    println!("Day {:02} Part 1: {}", d, x.solve_part1()?);
+                    println!("Day {:02} Part 2: {}", d, x.solve_part2()?);
                 },
             }
         },
         None => {
             let mut first = true;
-            for x in days.iter_mut() {
+            for (day,x) in days.iter_mut().enumerate() {
                 if !first {
                     println!("");
                 } else {
@@ -58,17 +58,17 @@ fn main() -> Result<()> {
                 x.parse()?;
                 match args.part {
                     Some(1) => {
-                        x.solve_part1()?;
+                        println!("Day {:02} Part 1: {}", day+1, x.solve_part1()?);
                     },
                     Some(2) => {
-                        x.solve_part2()?;
+                        println!("Day {:02} Part 2: {}", day+1, x.solve_part2()?);
                     },
                     Some(_) => {
                         return Err(anyhow!("invalid part provided"));
                     }
                     None => {
-                        x.solve_part1()?;
-                        x.solve_part2()?;
+                        println!("Day {:02} Part 1: {}", day+1, x.solve_part1()?);
+                        println!("Day {:02} Part 2: {}", day+1, x.solve_part2()?);
                     },
                 }
             }

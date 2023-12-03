@@ -2,7 +2,7 @@ use day_trait::Day;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
-use anyhow::{Context, Result, anyhow};
+use anyhow::{Context, Result};
 
 #[derive(Eq,Hash,PartialEq,Debug)]
 struct Pos {
@@ -77,7 +77,7 @@ impl Day for Day03 {
         Ok(())
     }
 
-    fn solve_part1(&mut self) -> Result<()> {
+    fn solve_part1(&mut self) -> Result<String> {
         let mut ret = 0;
 
         'num: for e in &self.nums {
@@ -111,13 +111,10 @@ impl Day for Day03 {
             }
         }
 
-        println!("Day 03, Part 1: {ret}");
-        Ok(())
+        Ok(ret.to_string())
     }
 
-    fn solve_part2(&mut self) -> Result<()> {
-        let mut ret = 0;
-
+    fn solve_part2(&mut self) -> Result<String> {
         // collect which nums are adjacent to each symbol
         for (idx,e) in self.nums.iter().enumerate() {
             let mut s = e.x.start;
@@ -147,7 +144,7 @@ impl Day for Day03 {
         }
 
         // go over '*' and multiply and then sum up adjacent numbers
-        ret = self.syms
+        let ret:u32 = self.syms
             .iter()
             .filter(|(_,x)| x.nums.len() == 2 && x.sym == '*')
             .map(|(_,x)| {
@@ -159,8 +156,7 @@ impl Day for Day03 {
                     .fold(1, |acc,x| acc * x)
             }).sum();
 
-        println!("Day 03, Part 2: {ret}");
-        Ok(())
+        Ok(ret.to_string())
     }
 }
 

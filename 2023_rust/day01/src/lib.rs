@@ -1,7 +1,7 @@
 use day_trait::Day;
 use std::fs::File;
 use std::io::{self, BufRead};
-use anyhow::{Context, Result, anyhow};
+use anyhow::{Context, Result};
 
 pub struct Day01 {
     lines: Vec<String>,
@@ -27,7 +27,7 @@ impl Day for Day01 {
         Ok(())
     }
 
-    fn solve_part1(&mut self) -> Result<()> {
+    fn solve_part1(&mut self) -> Result<String> {
         let mut ret = 0;
         for l in &self.lines {
             let mut first:i32 = 0;
@@ -43,11 +43,10 @@ impl Day for Day01 {
             ret += (first as u32)*10 + last;
         }
 
-        println!("Day 01, Part 1: {ret}");
-        Ok(())
+        Ok(ret.to_string())
     }
 
-    fn solve_part2(&mut self) -> Result<()> {
+    fn solve_part2(&mut self) -> Result<String> {
         let mut ret = 0;
         for l in &mut self.lines {
 
@@ -66,9 +65,7 @@ impl Day for Day01 {
             ret += (first as u32)*10 + last;
         }
 
-        println!("Day 01, Part 2: {ret}");
-
-        Ok(())
+        Ok(ret.to_string())
     }
 }
 

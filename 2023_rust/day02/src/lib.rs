@@ -92,7 +92,7 @@ impl Day for Day02 {
         Ok(())
     }
 
-    fn solve_part1(&mut self) -> Result<()> {
+    fn solve_part1(&mut self) -> Result<String> {
         let mut ret = 0;
         let total = Color{0:12, 1:13, 2:14};
 
@@ -102,19 +102,17 @@ impl Day for Day02 {
             }
         }
 
-        println!("Day 02, Part 1: {ret}");
-        Ok(())
+        Ok(ret.to_string())
     }
 
-    fn solve_part2(&mut self) -> Result<()> {
+    fn solve_part2(&mut self) -> Result<String> {
         let mut ret = 0;
 
         for g in &self.games {
             ret += g.min_possible().power();
         }
 
-        println!("Day 02, Part 2: {ret}");
-        Ok(())
+        Ok(ret.to_string())
     }
 }
 
