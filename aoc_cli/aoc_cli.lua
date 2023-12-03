@@ -59,7 +59,7 @@ local function send_sol(key, year, day, sol, level, path)
 	print("Status code:", code)
 
 	-- print the text inside the article section
-	local root = lxp.parse(table.concat(output, ""):gsub("&", ""))
+	local root = lxp.parse(table.concat(output, ""):gsub("&", "").."")
 	local res = {}
 	utils.find(root, function (n) return n["tag"] == "article" end, res, {})
 	for k,_ in pairs(res) do utils.printStrings(k) end
