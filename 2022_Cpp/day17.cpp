@@ -185,78 +185,6 @@ auto solve_slow(unsigned long rock_count, std::array<FallingRock,5> rocks, std::
 	return field.size();
 }
 
-// TODO remvoe this in the next commit
-// does not work (yet). Idea was to reduce the field by dropping bottom rows
-// (field_t must support pop_front) now and then -> build some sort of cache to
-// try and detect cycles
-// int field_reduce(field_t& field, bool print)
-// {
-// 	std::array<int,7> maxes{};
-// 	auto i{field.size()};
-// 	for(auto iter{field.rbegin()}; iter != field.rend(); iter++, i--)
-// 	{
-// 		if(print)
-// 			std::cout << i << std::endl;
-// 		unsigned long j{0};
-// 		for(const auto& jter : *iter)
-// 		{
-// 			if(jter && maxes[j] == 0)
-// 				maxes[j] = static_cast<int>(i);
-// 			j++;
-// 		}
-// 	}
-// 	int min{*std::min_element(maxes.begin(), maxes.end())};
-//
-// 	for(int i{0}; i < min-1; i++)
-// 		field.pop_front();
-// 	return min;
-// }
-// auto solve_mid(unsigned long rock_count, std::array<FallingRock,5> rocks, std::vector<Flow> flows)
-// {
-// 	field_t field{};
-// 	size_t field_offset{0};
-// 	std::map<field_t, std::map<int, std::map<int, std::tuple<field_t,int,size_t>>>> cache{};
-//
-// 	std::array<FallingRock,5>::size_type r{0};
-// 	auto rock{rocks[r]};
-// 	rock.set_anchor(field);
-// 	std::vector<Flow>::size_type f{0};
-//
-// 	for(unsigned long i{0}; i < rock_count;)
-// 	{
-// 		// pushed by gas
-// 		rock.move_right_left(field, flows[f].dir);
-// 		// std::cout << "Anchor:" << rock.anchor.first << "|" << rock.anchor.second << std::endl;
-// 		// std::cout << flows[f] << "\n" << std::endl;
-// 		f = (f+1) % flows.size();
-//
-// 		// move down
-// 		if(!rock.move_down(field)){
-// 			// solid
-// 			rock.make_solid(field);
-// 			if(i == -1){
-// 				field_reduce(field, true); // todo offset
-// 				std::cout << i << std::endl;
-// 				print_field(field);
-// 			} else {
-// 				std::cout << i << std::endl;
-// 				field_reduce(field, false); // todo offset
-// 				print_field(field);
-// 			}
-// 			i++;
-// 			if(i % 1000000 == 0)
-// 				std::cout << i << std::endl;
-// 			// print_field(field);
-// 			// next rock
-// 			r = (r+1) % rocks.size();
-// 			rock = rocks[r];
-// 			rock.set_anchor(field);
-// 			// std::cout << "Anchor:" << rock.anchor.first << "|" << rock.anchor.second << std::endl;
-// 		}
-// 	}
-// 	return field.size();
-// }
-
 // trys to find a cycle in the procedure -> no need to simulate everything =>
 // faster (and less memory)
 auto solve_fast_general(std::array<FallingRock,5> rocks, std::vector<Flow> flows)
@@ -405,6 +333,8 @@ auto solve_fast_general(std::array<FallingRock,5> rocks, std::vector<Flow> flows
 	// as long as it's an endless loop we'll never get here
 	throw std::runtime_error("No cycle detected");
 }
+
+// calculates height based on information about the cycle
 auto solve_fast_specific(long rock_count, long prefix_length, long cycle_length, long cycle_growth, const std::vector<long>& heights)
 {
 	// how often does the cycle repeat itself?
