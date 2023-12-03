@@ -2,6 +2,8 @@ use clap::Parser;
 use day_trait::Day;
 use anyhow::{Context, Result, anyhow};
 
+use day01;
+
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
@@ -15,7 +17,8 @@ struct Cli {
 }
 
 fn main() -> Result<()> {
-    let mut days: [Box<dyn Day>; 0] = [
+    let mut days: [Box<dyn Day>; 1] = [
+        Box::new(day01::Day01::new()),
     ];
 
     let args = Cli::parse();
