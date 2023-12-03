@@ -4,6 +4,7 @@
 #include <cassert>
 #include <algorithm>
 #include <queue>
+#include <set>
 #include <functional>
 
 #pragma once
@@ -128,5 +129,23 @@ std::optional<std::reference_wrapper<T>> breath_first_search(
 	}
 	return {};
 }
+
+	template <typename T1, typename T2>
+bool is_disjoint(const std::set<T1> &a, const std::set<T2> &b)
+{
+	auto it_a = a.begin();
+	auto it_b = b.begin();
+	while (it_a != a.end() && it_b != b.end())
+	{
+		if(*it_a == *it_b)
+			return false;
+		if(*it_a < *it_b)
+			it_a = std::lower_bound(++it_a, a.end(), *it_b);
+		else if(*it_a > *it_b)
+			it_b = std::lower_bound(++it_b, b.end(), *it_a);
+	}
+	return true;
+}
+
 
 } // Namespace aocutils
