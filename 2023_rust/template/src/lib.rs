@@ -22,16 +22,14 @@ impl Day for Day<TODO> {
         Ok(())
     }
 
-    fn solve_part1(&mut self) -> Result<()> {
+    fn solve_part1(&mut self) -> Result<String> {
         let mut ret = 0;
-        println!("Day <TODO>, Part 1: {ret}");
-        Ok(())
+        Ok("".to_string())
     }
 
-    fn solve_part2(&mut self) -> Result<()> {
+    fn solve_part2(&mut self) -> Result<String> {
         let mut ret = 0;
-        println!("Day <TODO>, Part 2: {ret}");
-        Ok(())
+        Ok("".to_string())
     }
 }
 
