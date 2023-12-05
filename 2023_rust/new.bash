@@ -6,7 +6,7 @@
 cp -r ./template/ "./day${1}"
 find "./day${1}" -type f -exec sed -i "s/<TODO>/${1}/g" {} \;
 
-tac Cargo.toml | sed "2i\t\"day${1}\"," | tac > Cargo.toml.1
+tac Cargo.toml | sed "2i"$'\t'"\"day${1}\"," | tac > Cargo.toml.1
 mv Cargo.toml.1 Cargo.toml
 
 sed -i "1s/^DAYS = /DAYS = ${1} /" Makefile
