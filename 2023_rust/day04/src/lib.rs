@@ -2,7 +2,7 @@ use day_trait::Day;
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::{self, BufRead};
-use anyhow::{Context, Result, anyhow};
+use anyhow::{Context, Result};
 
 #[derive(Debug)]
 struct Card {
