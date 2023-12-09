@@ -10,6 +10,7 @@ use day05;
 use day06;
 use day07;
 use day08;
+use day09;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -24,7 +25,7 @@ struct Cli {
 }
 
 fn main() -> Result<()> {
-    let mut days: [Box<dyn Day>; 8] = [
+    let mut days: [Box<dyn Day>; 9] = [
         Box::new(day01::Day01::new()),
         Box::new(day02::Day02::new()),
         Box::new(day03::Day03::new()),
@@ -33,6 +34,7 @@ fn main() -> Result<()> {
         Box::new(day06::Day06::new()),
         Box::new(day07::Day07::new()),
         Box::new(day08::Day08::new()),
+        Box::new(day09::Day09::new()),
     ];
 
     let args = Cli::parse();
