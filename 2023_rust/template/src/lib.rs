@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use anyhow::{Context, Result, anyhow};
 
+#[derive(Clone,Debug)]
 pub struct Day<TODO> {
 }
 
